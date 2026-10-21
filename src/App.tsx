@@ -5,7 +5,7 @@ import {
   Library, Milestone, Zap, Activity, HardDrive, ShieldCheck,
   CheckCircle2, Circle, BookOpen, Sparkles, TrendingUp,
   BarChart3, Target, Shield, Workflow, Boxes, Rocket, ArrowRight,
-  Database, RefreshCw, CheckSquare, Award
+  Database, RefreshCw, CheckSquare, Award, Video, Play, Tv, Bookmark
 } from 'lucide-react';
 
 import { 
@@ -25,7 +25,14 @@ import {
   PHASE_3_PERFORMANCE_FRONTIER 
 } from './data/principalArchitecture';
 
-type NavigationTab = 'purpose' | 'how-to-learn' | 'what-to-learn' | 'domains' | 'frontier';
+import {
+  TOP_YOUTUBE_CHANNELS,
+  CANONICAL_BOOKS,
+  FLAGSHIP_REPOSITORIES,
+  INTERACTIVE_PLATFORMS
+} from './data/masterResourcesHub';
+
+type NavigationTab = 'purpose' | 'how-to-learn' | 'what-to-learn' | 'domains' | 'frontier' | 'resources';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('purpose');
@@ -128,7 +135,7 @@ export default function App() {
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Industry Realities • HOW to Learn • WHAT to Learn • Domain Deep Dives • Compiler Frontier
+                Industry Realities • HOW & WHAT to Learn • Deep Dives • YouTube & Book Resources
               </p>
             </div>
           </div>
@@ -193,6 +200,18 @@ export default function App() {
             >
               <Activity className="w-3.5 h-3.5 text-pink-400" />
               <span>5. Compiler Frontier</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('resources')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
+                activeTab === 'resources'
+                  ? 'bg-red-600 text-white shadow-md shadow-red-600/30 font-semibold'
+                  : 'text-red-400 hover:text-white hover:bg-red-950/40'
+              }`}
+            >
+              <Video className="w-3.5 h-3.5 text-red-400" />
+              <span>6. 🎬 Video & Books Hub</span>
             </button>
           </div>
 
@@ -262,6 +281,14 @@ export default function App() {
             }`}
           >
             5. Compiler Frontier
+          </button>
+          <button
+            onClick={() => setActiveTab('resources')}
+            className={`px-2.5 py-1 rounded-md whitespace-nowrap transition ${
+              activeTab === 'resources' ? 'bg-red-600 text-white font-bold' : 'text-red-400'
+            }`}
+          >
+            6. 🎬 Video & Books Hub
           </button>
         </div>
       </header>
@@ -406,6 +433,51 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+
+                {/* Industry Authoritative Video Talks, Whitepapers & Codebases */}
+                {selectedIndustry.mediaResources && selectedIndustry.mediaResources.length > 0 && (
+                  <div className="pt-5 border-t border-slate-800 space-y-3">
+                    <h4 className="text-xs uppercase font-mono font-bold tracking-wider text-cyan-400 flex items-center space-x-2">
+                      <Video className="w-4 h-4 text-red-400" />
+                      <span>Industry Keynotes, Technical Presentations & Code Repositories:</span>
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {selectedIndustry.mediaResources.map((media, mIdx) => (
+                        <a
+                          key={mIdx}
+                          href={media.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-3 rounded-xl bg-[#090d16] border border-slate-800 hover:border-cyan-500/50 transition block group"
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
+                              media.type === 'video'
+                                ? 'bg-red-950/60 text-red-400 border border-red-800/60'
+                                : media.type === 'paper'
+                                ? 'bg-amber-950/60 text-amber-400 border border-amber-800/60'
+                                : media.type === 'doc'
+                                ? 'bg-blue-950/60 text-blue-400 border border-blue-800/60'
+                                : 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60'
+                            }`}>
+                              {media.type === 'video' ? '🎬 YouTube Talk' : media.type === 'paper' ? '📜 Whitepaper' : media.type === 'doc' ? '📄 Official Doc' : '🐙 Source Code'}
+                            </span>
+                            <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-cyan-400 transition" />
+                          </div>
+                          <h5 className="font-bold text-xs text-white group-hover:text-cyan-300 transition line-clamp-1 mb-0.5">
+                            {media.title}
+                          </h5>
+                          <span className="text-[10px] font-mono text-cyan-400 block mb-1">
+                            {media.source}
+                          </span>
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                            {media.description}
+                          </p>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -659,7 +731,7 @@ export default function App() {
             <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-950/30 via-[#111622] to-blue-950/30 border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-white text-base">Now discover WHAT to learn across the 4 Tiers</h3>
-                <p className="text-xs text-slate-300">Track your progress through 16 foundational to staff-level engineering skills.</p>
+                <p className="text-xs text-slate-300">Track your progress through 17 foundational to staff-level engineering skills with YouTube video guides.</p>
               </div>
               <button
                 onClick={() => setActiveTab('what-to-learn')}
@@ -689,7 +761,7 @@ export default function App() {
                     Complete Inventory of Rust Engineering Skills
                   </h1>
                   <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    Organized across 4 sequential phases from Absolute Beginner to Staff/Principal level. Every item includes the <strong>Concepts to Master</strong>, the <strong>Physical Hardware Reality</strong>, a <strong>Practical Drill</strong>, and executable code snippets. Check off skills as you build mastery.
+                    Organized across 4 sequential phases from Absolute Beginner to Staff/Principal level. Every item includes the <strong>Concepts to Master</strong>, the <strong>Physical Hardware Reality</strong>, a <strong>Practical Drill</strong>, executable code snippets, and <strong>Curated YouTube & Book Links</strong>.
                   </p>
                 </div>
 
@@ -876,6 +948,58 @@ export default function App() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Curated Resources (YouTube Videos, Books, Docs & Repos) */}
+                      {item.resources && item.resources.length > 0 && (
+                        <div className="mt-5 pt-4 border-t border-slate-800">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <Video className="w-4 h-4 text-red-400" />
+                            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+                              Industry-Standard Learning Resources & YouTube Deep Dives:
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            {item.resources.map((res, rIdx) => (
+                              <a
+                                key={rIdx}
+                                href={res.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-3 rounded-xl bg-[#06080d] border border-slate-800 hover:border-orange-500/50 transition flex flex-col justify-between group"
+                              >
+                                <div>
+                                  <div className="flex items-center justify-between mb-1.5">
+                                    <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
+                                      res.type === 'video'
+                                        ? 'bg-red-950/60 text-red-400 border border-red-800/60'
+                                        : res.type === 'book'
+                                        ? 'bg-amber-950/60 text-amber-400 border border-amber-800/60'
+                                        : res.type === 'doc'
+                                        ? 'bg-blue-950/60 text-blue-400 border border-blue-800/60'
+                                        : res.type === 'repo'
+                                        ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60'
+                                        : 'bg-purple-950/60 text-purple-400 border border-purple-800/60'
+                                    }`}>
+                                      {res.type === 'video' ? '🎬 YouTube' : res.type === 'book' ? '📚 Book' : res.type === 'doc' ? '📄 Doc' : res.type === 'repo' ? '🐙 Repo' : '🎓 Course'}
+                                    </span>
+                                    <ExternalLink className="w-2.5 h-2.5 text-slate-500 group-hover:text-orange-400" />
+                                  </div>
+                                  <h5 className="text-xs font-bold text-white group-hover:text-orange-300 transition line-clamp-1">
+                                    {res.title}
+                                  </h5>
+                                  <span className="text-[10px] font-mono text-orange-400/90 block mb-1">
+                                    {res.creatorOrPlatform}
+                                  </span>
+                                  <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                                    {res.description}
+                                  </p>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   );
                 })}
@@ -904,7 +1028,7 @@ export default function App() {
         {/* ========================================================================= */}
         {activeTab === 'domains' && (
           <div className="space-y-8">
-            {/* Phase 2 Header & Domain Switcher */}
+            {/* Header & Domain Switcher */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
@@ -1228,6 +1352,251 @@ export default function App() {
                   </div>
                 </div>
               ))}
+            </div>
+
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 6: MASTER RESOURCE & VIDEO HUB (YOUTUBE, BOOKS, REPOS, PLATFORMS)      */}
+        {/* ========================================================================= */}
+        {activeTab === 'resources' && (
+          <div className="space-y-8">
+            {/* Banner */}
+            <div className="bg-gradient-to-r from-[#211117] via-[#16111f] to-[#0a0d14] p-6 sm:p-8 rounded-2xl border border-red-500/30 shadow-2xl relative overflow-hidden">
+              <div className="max-w-3xl">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-mono font-medium mb-3">
+                  <Video className="w-3.5 h-3.5 text-red-400" />
+                  <span>INDUSTRY-STANDARD LEARNING DIRECTORY</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">
+                  Authoritative Video Playlists, Canonical Books & Repositories
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                  Curated specifically to transition an engineer from beginner to Staff/Principal level. Contains the <strong>top YouTube educator channels</strong>, <strong>canonical systems books</strong>, <strong>production GitHub repositories</strong>, and <strong>interactive assembly platforms</strong>.
+                </p>
+
+                <div className="flex flex-wrap gap-2 text-xs font-mono">
+                  <span className="px-3 py-1 rounded-lg bg-[#090d16] border border-slate-800 text-red-300">
+                    🎬 7 Premier YouTube Channels
+                  </span>
+                  <span className="px-3 py-1 rounded-lg bg-[#090d16] border border-slate-800 text-amber-300">
+                    📚 6 Canonical Textbooks
+                  </span>
+                  <span className="px-3 py-1 rounded-lg bg-[#090d16] border border-slate-800 text-emerald-300">
+                    🐙 8 Flagship Open Source Repos
+                  </span>
+                  <span className="px-3 py-1 rounded-lg bg-[#090d16] border border-slate-800 text-cyan-300">
+                    🛠️ 5 Interactive Sandboxes
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 1: TOP YOUTUBE CHANNELS & PLAYLISTS */}
+            <div className="space-y-4">
+              <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                    <Video className="w-5 h-5 text-red-500" />
+                    <span>Premier YouTube Channels & Deep-Dive Playlists</span>
+                  </h2>
+                  <p className="text-xs text-slate-400">
+                    Follow these world-class engineers for live code audits, compiler internals, and multi-hour architecture streams.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {TOP_YOUTUBE_CHANNELS.map((ch, idx) => (
+                  <div key={idx} className="p-5 rounded-2xl bg-[#111622] border border-slate-800 flex flex-col justify-between space-y-4 shadow-xl">
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-extrabold text-base text-white">{ch.name}</span>
+                          <span className="text-xs font-mono text-red-400">{ch.handle}</span>
+                        </div>
+                        <a
+                          href={ch.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2.5 py-1 rounded-lg bg-red-950/60 hover:bg-red-900 border border-red-800/60 text-red-300 text-xs font-mono flex items-center space-x-1 transition"
+                        >
+                          <span>Visit Channel</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+
+                      <div className="text-[11px] font-mono text-slate-400 mb-2">
+                        {ch.subscriberTag} • <span className="text-orange-400 font-semibold">{ch.focusArea}</span>
+                      </div>
+
+                      <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                        {ch.whySubscribe}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-800/80 space-y-1.5">
+                      <span className="text-[10px] font-mono uppercase text-slate-400 block font-bold">
+                        Flagship Playlists & High-Impact Talks:
+                      </span>
+                      <div className="space-y-1">
+                        {ch.highlightedPlaylistsOrVideos.map((vid, vIdx) => (
+                          <a
+                            key={vIdx}
+                            href={vid.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center justify-between p-2 rounded-lg bg-[#090d16] hover:bg-slate-800/60 text-xs text-slate-300 hover:text-white transition group"
+                          >
+                            <span className="flex items-center space-x-2 line-clamp-1">
+                              <Play className="w-3 h-3 text-red-400 group-hover:scale-110 transition shrink-0" />
+                              <span>{vid.title}</span>
+                            </span>
+                            <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-red-400 shrink-0 ml-2" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECTION 2: CANONICAL SYSTEMS BOOKS */}
+            <div className="space-y-4">
+              <div className="border-b border-slate-800 pb-3">
+                <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <BookOpen className="w-5 h-5 text-amber-400" />
+                  <span>The Canonical Systems Textbooks</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Read these authoritative published texts sequentially to build theoretical and practical mastery.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {CANONICAL_BOOKS.map((book, bIdx) => (
+                  <div key={bIdx} className="p-5 rounded-2xl bg-[#111622] border border-slate-800 flex flex-col justify-between space-y-3 shadow-lg">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border uppercase font-bold ${
+                          book.level === 'Beginner'
+                            ? 'bg-blue-950/60 text-blue-300 border-blue-800/60'
+                            : book.level === 'Intermediate'
+                            ? 'bg-amber-950/60 text-amber-300 border-amber-800/60'
+                            : 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60'
+                        }`}>
+                          {book.level}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">{book.publisher}</span>
+                      </div>
+
+                      <h3 className="font-bold text-sm text-white mb-0.5 leading-snug">{book.title}</h3>
+                      <span className="text-xs font-mono text-orange-400 block mb-2">{book.author}</span>
+
+                      <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                        {book.annotation}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800/80 space-y-2">
+                      <div className="text-[11px] text-amber-200/90 font-mono bg-amber-950/20 p-2 rounded-lg border border-amber-900/30">
+                        <strong className="text-amber-400 block text-[10px] uppercase">Core Architect Takeaway:</strong>
+                        {book.keyTakeaway}
+                      </div>
+
+                      <a
+                        href={book.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full py-1.5 px-3 rounded-lg bg-[#090d16] hover:bg-slate-800 border border-slate-800 text-xs font-mono text-slate-300 hover:text-white flex items-center justify-center space-x-1.5 transition"
+                      >
+                        <span>Access Book / Resource</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECTION 3: FLAGSHIP PRODUCTION GITHUB REPOSITORIES */}
+            <div className="space-y-4">
+              <div className="border-b border-slate-800 pb-3">
+                <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <Code2 className="w-5 h-5 text-emerald-400" />
+                  <span>Flagship Real-World Production Repositories</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Read production open-source code from the world's most battle-tested Rust codebases.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {FLAGSHIP_REPOSITORIES.map((repo, rIdx) => (
+                  <a
+                    key={rIdx}
+                    href={repo.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3.5 rounded-xl bg-[#111622] border border-slate-800 hover:border-emerald-500/50 transition flex flex-col justify-between group"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60 text-emerald-300">
+                          {repo.industry}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">★ {repo.starsEstimate}</span>
+                      </div>
+                      <h4 className="font-bold text-xs text-white group-hover:text-emerald-300 transition">
+                        {repo.org}/{repo.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 leading-snug mt-1">
+                        {repo.description}
+                      </p>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-emerald-400">
+                      <span>Explore Source</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* SECTION 4: INTERACTIVE PLATFORMS & COMPILERS */}
+            <div className="space-y-4">
+              <div className="border-b border-slate-800 pb-3">
+                <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <Terminal className="w-5 h-5 text-cyan-400" />
+                  <span>Interactive Sandboxes, Playgrounds & Specifications</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Interactive tools for inspecting assembly, reading specifications, and hands-on practice.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {INTERACTIVE_PLATFORMS.map((plat, pIdx) => (
+                  <a
+                    key={pIdx}
+                    href={plat.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3.5 rounded-xl bg-[#111622] border border-slate-800 hover:border-cyan-500/50 transition block group"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-bold text-xs text-white group-hover:text-cyan-300 transition">
+                        {plat.title}
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-slate-500 group-hover:text-cyan-400" />
+                    </div>
+                    <span className="text-[10px] font-mono text-cyan-400 block mb-1">{plat.category}</span>
+                    <p className="text-xs text-slate-400 leading-relaxed">{plat.description}</p>
+                  </a>
+                ))}
+              </div>
             </div>
 
           </div>

@@ -7,6 +7,14 @@ export interface LearningMethodPillar {
   actionableStep: string;
 }
 
+export interface CuratedResource {
+  title: string;
+  url: string;
+  type: 'video' | 'book' | 'doc' | 'repo' | 'course';
+  creatorOrPlatform: string;
+  description: string;
+}
+
 export interface MasteryTierItem {
   id: string;
   domain: string;
@@ -14,6 +22,7 @@ export interface MasteryTierItem {
   hardwareReality: string;
   practicalDrill: string;
   codeSnippet: string;
+  resources: CuratedResource[];
 }
 
 export interface MasteryTier {
@@ -70,18 +79,48 @@ export const WHAT_TO_LEARN_TIERS: MasteryTier[] = [
     items: [
       {
         id: "t1-toolchain",
-        domain: "Toolchain & Environment",
+        domain: "Toolchain, Cargo & The Compiler Environment",
         conceptsToMaster: "`rustup`, `cargo new`, `cargo check`, `cargo clippy`, `cargo fmt`, `cargo test`, profiles (`dev` vs `release`).",
         hardwareReality: "Setting up optimization profiles and catching bad idioms early via automated linter passes.",
         practicalDrill: "Configure a project with strict Clippy flags: `#![deny(clippy::all, clippy::pedantic)]` and achieve 0 warnings.",
         codeSnippet: `# Useful terminal commands:
 cargo check            # Fast syntax & type check without codegen
 cargo clippy           # The authoritative Rust linter
-cargo test             # Runs unit and integration test harnesses`
+cargo test             # Runs unit and integration test harnesses`,
+        resources: [
+          {
+            title: "Rust Crash Course | Toolchain, Cargo & Clippy",
+            url: "https://www.youtube.com/watch?v=zF34dRivLOw",
+            type: "video",
+            creatorOrPlatform: "Let's Get Rusty (YouTube)",
+            description: "End-to-end breakdown of how Cargo drives rustc, crates.io dependency resolution, and compiler flags."
+          },
+          {
+            title: "Rust's Cargo is Incredible",
+            url: "https://www.youtube.com/watch?v=5V_l1j8iN_A",
+            type: "video",
+            creatorOrPlatform: "No Boilerplate (YouTube)",
+            description: "Visual exploration of why Cargo is recognized as the best package manager and build system in modern computing."
+          },
+          {
+            title: "The Cargo Book (Official Documentation)",
+            url: "https://doc.rust-lang.org/cargo/",
+            type: "doc",
+            creatorOrPlatform: "Rust Lang Foundation",
+            description: "The canonical guide covering build profiles, workspaces, feature flags, and build scripts."
+          },
+          {
+            title: "Rustlings Interactive Exercises",
+            url: "https://github.com/rust-lang/rustlings",
+            type: "course",
+            creatorOrPlatform: "GitHub / Rust Project",
+            description: "Interactive hands-on command-line exercises to build muscle memory fixing compiler errors."
+          }
+        ]
       },
       {
         id: "t1-ownership",
-        domain: "Ownership & Move Semantics",
+        domain: "Ownership, RAII & Move Semantics",
         conceptsToMaster: "Single Owner rule, Stack allocation vs Heap allocation, Move semantics, Copy trait (bitwise memcpy), Scope drop.",
         hardwareReality: "Eliminates manual free() errors. The compiler generates deterministic RAII deallocation at the exact exit of stack frames.",
         practicalDrill: "Trace the stack frame pointer and heap pointer of a String being passed across three functions.",
@@ -90,11 +129,41 @@ cargo test             # Runs unit and integration test harnesses`
     let s2 = s1; // 24-byte stack header copied; s1 invalidated (Move)
     // println!("{}", s1); // COMPILE ERROR: use of moved value!
     println!("{}", s2);
-} // Heap memory deallocated precisely here for s2`
+} // Heap memory deallocated precisely here for s2`,
+        resources: [
+          {
+            title: "Crust of Rust: Lifetime Annotations & Ownership",
+            url: "https://www.youtube.com/watch?v=rAl-9HwD858",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Deep, uncompromising multi-hour walk-through of ownership, borrowing mechanics, and physical memory."
+          },
+          {
+            title: "Understanding Ownership (Rust Book Chapter 4)",
+            url: "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+            type: "doc",
+            creatorOrPlatform: "Official Rust Book",
+            description: "The canonical explanation of ownership, stack frames, heap pointers, and the Copy trait."
+          },
+          {
+            title: "Rust's Secret Weapon: The Stack & The Heap",
+            url: "https://www.youtube.com/watch?v=3by0i5gH_jQ",
+            type: "video",
+            creatorOrPlatform: "No Boilerplate (YouTube)",
+            description: "Hardware visualization showing how Rust replaces a garbage collector with zero-cost RAII stack deallocation."
+          },
+          {
+            title: "The Rust Programming Language (No Starch Press)",
+            url: "https://nostarch.com/rust-programming-language-2nd-edition",
+            type: "book",
+            creatorOrPlatform: "Steve Klabnik & Carol Nichols",
+            description: "The definitive physical book teaching the fundamentals of ownership from first principles."
+          }
+        ]
       },
       {
         id: "t1-borrowing",
-        domain: "Borrowing & References",
+        domain: "Borrowing, References & The Aliasing Law",
         conceptsToMaster: "Shared references (&T), exclusive mutable references (&mut T), the Aliasing XOR Mutability law, reference dereferencing.",
         hardwareReality: "Prevents pointer aliasing hazards and data races at the CPU cache level. Enables LLVM to keep variables in registers.",
         practicalDrill: "Implement a function that borrows a vector as mutable to modify values in-place without returning a new vector.",
@@ -102,7 +171,37 @@ cargo test             # Runs unit and integration test harnesses`
     for val in log.iter_mut() {
         *val += 1; // Exclusive mutable reference
     }
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: Subtyping and Variance",
+            url: "https://www.youtube.com/watch?v=iVYWDIW71jk",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Master-level explanation of how mutable references enforce exclusivity and prevent memory corruption."
+          },
+          {
+            title: "Aliasing in the Rustonomicon",
+            url: "https://doc.rust-lang.org/nomicon/aliasing.html",
+            type: "doc",
+            creatorOrPlatform: "The Rustonomicon",
+            description: "Detailed specification on why aliasing with mutability is undefined behavior in hardware and how Rust enforces it."
+          },
+          {
+            title: "How Rust Prevents Data Races at Compile Time",
+            url: "https://www.youtube.com/watch?v=DfyC5bO_6pQ",
+            type: "video",
+            creatorOrPlatform: "Logan Smith (YouTube)",
+            description: "Deep dive into CPU cacheline coherence (MESI protocol) and why &mut exclusivity eliminates concurrency bugs."
+          },
+          {
+            title: "Programming Rust (2nd Edition, O'Reilly)",
+            url: "https://www.oreilly.com/library/view/programming-rust-2nd/9781492052586/",
+            type: "book",
+            creatorOrPlatform: "Jim Blandy, Jason Orendorff, Leonora Tindall",
+            description: "The ultimate systems reference book detailing reference mechanics, pointer layouts, and memory safety."
+          }
+        ]
       },
       {
         id: "t1-enums-matching",
@@ -124,11 +223,34 @@ fn handle_transponder(state: TransponderState) {
         TransponderState::Emergency(code) => alert_atc(code),
         TransponderState::Standby => {}
     }
-}`
+}`,
+        resources: [
+          {
+            title: "Algebraic Data Types in Rust: The Power of Enums",
+            url: "https://www.youtube.com/watch?v=yqnK7UfS14Q",
+            type: "video",
+            creatorOrPlatform: "Logan Smith (YouTube)",
+            description: "How tagged unions replace fragile object-oriented inheritance hierarchies with mathematically exhaustive types."
+          },
+          {
+            title: "The Rust Book: Enums and Pattern Matching",
+            url: "https://doc.rust-lang.org/book/ch06-00-enums.html",
+            type: "doc",
+            creatorOrPlatform: "Official Rust Book",
+            description: "Complete guide to defining enums, matching against Option<T>, and binding values to pattern matches."
+          },
+          {
+            title: "Rust in Action",
+            url: "https://www.manning.com/books/rust-in-action",
+            type: "book",
+            creatorOrPlatform: "Tim McNamara (Manning)",
+            description: "Hands-on systems programming book showing how enums represent network packets and CPU CPU opcode sets."
+          }
+        ]
       },
       {
         id: "t1-error-handling",
-        domain: "Error Handling & No Null",
+        domain: "Error Handling & No Null Pointer Guarantee",
         conceptsToMaster: "`Option<T>` (`Some`/`None`), `Result<T, E>` (`Ok`/`Err`), the `?` propagation operator, custom error types.",
         hardwareReality: "Bans null pointers forever. Option<&T> uses physical address 0x0 for None (Null Pointer Optimization) with 0 memory penalty.",
         practicalDrill: "Write a file parser that reads numbers from disk, parses strings to integers, and propagates all errors cleanly with `?`.",
@@ -136,11 +258,41 @@ fn handle_transponder(state: TransponderState) {
     let content = std::fs::read_to_string(path)?; // propagates IO error
     let port: u32 = content.trim().parse()?;       // propagates Parse error
     Ok(port)
-}`
+}`,
+        resources: [
+          {
+            title: "Idiomatic Error Handling with thiserror & anyhow",
+            url: "https://www.youtube.com/watch?v=s5S2EdZ8VnE",
+            type: "video",
+            creatorOrPlatform: "Logan Smith (YouTube)",
+            description: "Comprehensive guide to separating library errors (thiserror) from application errors (anyhow)."
+          },
+          {
+            title: "Fast, Safe, and Pretty Errors in Rust",
+            url: "https://www.youtube.com/watch?v=9_3xV8w9XzQ",
+            type: "video",
+            creatorOrPlatform: "No Boilerplate (YouTube)",
+            description: "How the Result type and the ? operator enable predictable, zero-overhead error propagation without exceptions."
+          },
+          {
+            title: "dtolnay/anyhow (GitHub)",
+            url: "https://github.com/dtolnay/anyhow",
+            type: "repo",
+            creatorOrPlatform: "David Tolnay",
+            description: "The gold-standard idiomatic error-handling library used across production cloud and systems crates."
+          },
+          {
+            title: "The Rust Book: Error Handling",
+            url: "https://doc.rust-lang.org/book/ch09-00-error-handling.html",
+            type: "doc",
+            creatorOrPlatform: "Official Rust Book",
+            description: "Canonical explanation of unrecoverable panics vs recoverable Results and the ? propagation operator."
+          }
+        ]
       },
       {
         id: "t1-collections-iterators",
-        domain: "Collections & Iterators",
+        domain: "Collections & Zero-Cost Iterators",
         conceptsToMaster: "`Vec<T>`, `HashMap<K, V>`, slices (`&[T]`, `&str`), `.iter()`, `.map()`, `.filter()`, `.collect()`.",
         hardwareReality: "Rust iterators are zero-cost abstractions. Chained iterator pipelines compile into contiguous, vectorized assembly loops.",
         practicalDrill: "Given a list of transactions, filter positive balances, convert currencies, and collect into a HashMap in one iterator chain.",
@@ -149,7 +301,30 @@ let valid_fahrenheit: Vec<f64> = samples
     .into_iter()
     .filter(|&c| c >= 0.0)
     .map(|c| c * 1.8 + 32.0)
-    .collect();`
+    .collect();`,
+        resources: [
+          {
+            title: "Crust of Rust: Iterators",
+            url: "https://www.youtube.com/watch?v=yozQ9C69pQA",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Masterclass on implementing the Iterator trait, streaming iterators, and zero-cost combinators."
+          },
+          {
+            title: "Zero-Cost Abstractions: Iterators Under the Hood",
+            url: "https://www.youtube.com/watch?v=w3_N6_X8j8c",
+            type: "video",
+            creatorOrPlatform: "Ryan Levick (YouTube)",
+            description: "Demonstrates how LLVM inlines iterator chains and autovectorizes them into SIMD instructions."
+          },
+          {
+            title: "std::iter Module Documentation",
+            url: "https://doc.rust-lang.org/std/iter/index.html",
+            type: "doc",
+            creatorOrPlatform: "Rust Standard Library",
+            description: "The comprehensive API guide to all iterator adapters, folds, zippers, and collector methods."
+          }
+        ]
       }
     ]
   },
@@ -173,7 +348,37 @@ let valid_fahrenheit: Vec<f64> = samples
 // Inlined direct jump without vtable indirection:
 pub fn poll_device<T: Device>(dev: &T, reg: u8) -> u8 {
     dev.read_register(reg)
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: Dispatch and Fat Pointers",
+            url: "https://www.youtube.com/watch?v=xcygqF5LVmM",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Detailed breakdown of trait objects, virtual method tables (vtables), wide pointers, and dynamic dispatch."
+          },
+          {
+            title: "Traits, Generics, and Trait Objects in Rust",
+            url: "https://www.youtube.com/watch?v=GRm_C_N2b_c",
+            type: "video",
+            creatorOrPlatform: "Ryan Levick (YouTube)",
+            description: "Explains monomorphization vs runtime vtables, when to use static dispatch, and how the compiler inlines traits."
+          },
+          {
+            title: "Rust for Rustaceans (No Starch Press)",
+            url: "https://nostarch.com/rust-rustaceans",
+            type: "book",
+            creatorOrPlatform: "Jon Gjengset",
+            description: "Chapter 2: Traits and Generics. The authoritative intermediate-to-advanced guide for systems engineers."
+          },
+          {
+            title: "The Rust Reference: Trait Objects and Vtables",
+            url: "https://doc.rust-lang.org/reference/types/trait-object.html",
+            type: "doc",
+            creatorOrPlatform: "The Rust Reference",
+            description: "Formal specification of memory layout and dynamic dispatch mechanics in rustc."
+          }
+        ]
       },
       {
         id: "t2-lifetimes",
@@ -190,7 +395,30 @@ impl<'a> LogEntry<'a> {
     fn message(&self) -> &'a str {
         &self.raw_payload[8..] // target memory outlives the reference
     }
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: Lifetime Annotations",
+            url: "https://www.youtube.com/watch?v=rAl-9HwD858",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Clear and deep exploration of explicit lifetime parameters, struct bounds, and reference relationships."
+          },
+          {
+            title: "Common Rust Lifetime Misconceptions",
+            url: "https://github.com/pretzelhammer/rust-blog/blob/master/posts/common-rust-lifetime-misconceptions.md",
+            type: "doc",
+            creatorOrPlatform: "Pretzelhammer (GitHub Guide)",
+            description: "The most famous and widely recommended deep dive on 'T: 'static vs &'static T and lifetime variance."
+          },
+          {
+            title: "Rust Lifetimes Demystified",
+            url: "https://www.youtube.com/watch?v=1QoT99L_n_Y",
+            type: "video",
+            creatorOrPlatform: "Logan Smith (YouTube)",
+            description: "Visualizes stack frames and explains why lifetimes are compile-time relationship proofs with zero runtime overhead."
+          }
+        ]
       },
       {
         id: "t2-smart-pointers",
@@ -206,11 +434,34 @@ let clone = Arc::clone(&shared_data);
 std::thread::spawn(move || {
     let mut guard = clone.lock().unwrap();
     guard.push(4);
-});`
+});`,
+        resources: [
+          {
+            title: "Crust of Rust: Smart Pointers and Interior Mutability",
+            url: "https://www.youtube.com/watch?v=kYnP_M_aE6Y",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Examines Box, Rc, Arc, Cell, and RefCell down to their byte representations and safety boundaries."
+          },
+          {
+            title: "Rust Smart Pointers Explained: Box, Rc, Arc, RefCell",
+            url: "https://www.youtube.com/watch?v=8VzV8F4r_nQ",
+            type: "video",
+            creatorOrPlatform: "Let's Get Rusty (YouTube)",
+            description: "Quick reference guide demonstrating when to use Box for heap allocation vs Arc for thread sharing."
+          },
+          {
+            title: "The Rust Book: Chapter 15 - Smart Pointers",
+            url: "https://doc.rust-lang.org/book/ch15-00-smart-pointers.html",
+            type: "doc",
+            creatorOrPlatform: "Official Rust Book",
+            description: "Covers the Deref and Drop traits, memory management in smart pointer types, and preventing reference cycles."
+          }
+        ]
       },
       {
         id: "t2-concurrency-contracts",
-        domain: "Multi-Threading, Send & Sync",
+        domain: "Multi-Threading, Send & Sync Concurrency",
         conceptsToMaster: "`std::thread`, MPSC channels, the `Send` trait (safe to move across threads), and `Sync` trait (safe to share).",
         hardwareReality: "The compiler mathematical proof preventing data races. Prevents unsynchronized cacheline writes across CPU cores.",
         practicalDrill: "Build a multi-worker pipeline where 4 producer threads stream data through a channel to a single aggregator thread.",
@@ -223,7 +474,37 @@ for i in 0..4 {
     thread::spawn(move || {
         tx_clone.send(i * 10).unwrap();
     });
-}`
+}`,
+        resources: [
+          {
+            title: "Rust Atomics and Memory Ordering (RustConf)",
+            url: "https://www.youtube.com/watch?v=r_M5z17_g-Y",
+            type: "video",
+            creatorOrPlatform: "Mara Bos (RustConf)",
+            description: "World-class lecture by the Rust Library Team Lead on hardware atomics, memory models, and thread safety."
+          },
+          {
+            title: "Crust of Rust: Channels",
+            url: "https://www.youtube.com/watch?v=b4mS5UPHh20",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Live-coding an MPSC and crossbeam-style channel from scratch using atomics, locks, and condition variables."
+          },
+          {
+            title: "Rust Atomics and Locks (O'Reilly)",
+            url: "https://marabos.nl/atomics/",
+            type: "book",
+            creatorOrPlatform: "Mara Bos",
+            description: "The canonical low-level book covering concurrency, atomics, memory ordering, and operating system locks."
+          },
+          {
+            title: "crossbeam-rs/crossbeam (GitHub)",
+            url: "https://github.com/crossbeam-rs/crossbeam",
+            type: "repo",
+            creatorOrPlatform: "Crossbeam Team",
+            description: "Industry-standard concurrent programming library providing lock-free queues, epoch-based reclamation, and channels."
+          }
+        ]
       },
       {
         id: "t2-async-tokio",
@@ -241,7 +522,44 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let _ = socket.read(&mut buf).await;
         });
     }
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: async/await",
+            url: "https://www.youtube.com/watch?v=ThjvM93ZX4o",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Deep dive into state machines generated by async fn, Future poll mechanics, Wakers, and Pin."
+          },
+          {
+            title: "Tokio: An Asynchronous Rust Runtime (RustConf)",
+            url: "https://www.youtube.com/watch?v=4Q3G_fP49Hk",
+            type: "video",
+            creatorOrPlatform: "Carl Lerche (Tokio Author)",
+            description: "Keynote presentation explaining the work-stealing scheduler, timer wheels, and reactor loop behind Tokio."
+          },
+          {
+            title: "Async Rust in Practice (Rust Nation UK)",
+            url: "https://www.youtube.com/watch?v=W7m1w52sYkQ",
+            type: "video",
+            creatorOrPlatform: "Alice Ryhl (Google / Tokio Maintainer)",
+            description: "Pragmatic architectural patterns, avoiding async deadlocks, handling backpressure, and graceful shutdown."
+          },
+          {
+            title: "The Tokio Tutorial & Guides",
+            url: "https://tokio.rs/tokio/tutorial",
+            type: "doc",
+            creatorOrPlatform: "Tokio Project",
+            description: "The authoritative step-by-step tutorial building an asynchronous Redis client and server from scratch."
+          },
+          {
+            title: "Asynchronous Programming in Rust (Carl Fredrik Samson)",
+            url: "https://cfsamson.github.io/book-exploring-async-basics/",
+            type: "book",
+            creatorOrPlatform: "Carl Fredrik Samson",
+            description: "Free online book explaining non-blocking epoll/kqueue event loops and green threads under the hood."
+          }
+        ]
       }
     ]
   },
@@ -265,11 +583,41 @@ impl<T> RawSlice<T> {
         // SAFETY: Caller must ensure idx < self.len
         &*self.ptr.add(idx)
     }
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: Unsafe Rust",
+            url: "https://www.youtube.com/watch?v=q3wGvj1hB_A",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Exhaustive exploration of what Unsafe Rust actually allows, pointer provenance, aliasing rules, and UB."
+          },
+          {
+            title: "Stacked Borrows & Tree Borrows (RustConf)",
+            url: "https://www.youtube.com/watch?v=0cT6r_K4Z1g",
+            type: "video",
+            creatorOrPlatform: "Ralf Jung (Miri Creator)",
+            description: "Deep theoretical exploration of memory provenance, pointer aliasing, and how Miri detects subtle UB."
+          },
+          {
+            title: "The Rustonomicon: The Dark Arts of Unsafe Rust",
+            url: "https://doc.rust-lang.org/nomicon/",
+            type: "doc",
+            creatorOrPlatform: "Official Rustonomicon",
+            description: "The canonical book on undefined behavior, uninitialized memory, pointer provenance, and exception safety."
+          },
+          {
+            title: "rust-lang/miri (GitHub)",
+            url: "https://github.com/rust-lang/miri",
+            type: "repo",
+            creatorOrPlatform: "Rust Compiler Team",
+            description: "An interpreter for Rust's mid-level intermediate representation (MIR) detecting undefined behavior."
+          }
+        ]
       },
       {
         id: "t3-memory-layout",
-        domain: "Memory Layouts, Alignment & Padding",
+        domain: "Memory Layouts, Alignment & Struct Packing",
         conceptsToMaster: "Struct padding, alignment rules, `#[repr(C)]`, `#[repr(packed)]`, Zero-Sized Types (ZSTs) for compile-time state machines.",
         hardwareReality: "Eliminates padding gaps in memory and ensures structs match binary network packets and PCIe hardware registers byte-for-byte.",
         practicalDrill: "Optimize a struct with mixed data types to shrink its memory size from 32 bytes to 16 bytes by reordering fields.",
@@ -282,7 +630,30 @@ struct Optimal {
     b: u64, // 8 bytes
     c: u16, // 2 bytes
     a: u8,  // 1 byte (+ 5 bytes padding)
-}`
+}`,
+        resources: [
+          {
+            title: "Rust Memory Layouts and Struct Alignment",
+            url: "https://www.youtube.com/watch?v=r_G_7XFz_n0",
+            type: "video",
+            creatorOrPlatform: "Fasterthanlime (YouTube)",
+            description: "Visual breakdown of struct layout, padding bytes, field reordering, and how the CPU accesses aligned memory."
+          },
+          {
+            title: "The Rust Reference: Type Layout",
+            url: "https://doc.rust-lang.org/reference/type-layout.html",
+            type: "doc",
+            creatorOrPlatform: "The Rust Reference",
+            description: "Formal specification of primitive type sizes, align_of, size_of, and repr attributes."
+          },
+          {
+            title: "cargo-bloat: Find What Takes Space in Binaries",
+            url: "https://github.com/RazrFalcon/cargo-bloat",
+            type: "repo",
+            creatorOrPlatform: "GitHub Tool",
+            description: "Essential profiling tool reporting per-function and per-struct binary footprint and monomorphization cost."
+          }
+        ]
       },
       {
         id: "t3-cachelines",
@@ -296,7 +667,30 @@ struct Optimal {
 #[repr(align(64))]
 pub struct ThreadIsolatedCounter {
     pub count: AtomicUsize,
-}`
+}`,
+        resources: [
+          {
+            title: "False Sharing & Hardware Cache Lines",
+            url: "https://www.youtube.com/watch?v=WDIkqP4JbkE",
+            type: "video",
+            creatorOrPlatform: "Creel (YouTube)",
+            description: "Incredible hardware animation showing how multi-core CPUs ping-pong cachelines via the MESI protocol."
+          },
+          {
+            title: "What Every Programmer Should Know About Memory",
+            url: "https://people.freebsd.org/~lstewart/articles/cpumemory.pdf",
+            type: "book",
+            creatorOrPlatform: "Ulrich Drepper (Red Hat)",
+            description: "The seminal 100-page paper on CPU cache hierarchies, memory controllers, TLB, and DMA operations."
+          },
+          {
+            title: "crossbeam_utils::CachePadded Documentation",
+            url: "https://docs.rs/crossbeam-utils/latest/crossbeam_utils/struct.CachePadded.html",
+            type: "doc",
+            creatorOrPlatform: "Crossbeam Docs",
+            description: "Production guide for wrapping atomic counters in 64-byte padded structs to prevent false sharing."
+          }
+        ]
       },
       {
         id: "t3-lock-free-atomics",
@@ -309,11 +703,34 @@ pub struct ThreadIsolatedCounter {
 pub fn record_metric(atomic: &AtomicUsize) {
     // Relaxed ordering is fastest when cross-variable synchronization is unneeded:
     atomic.fetch_add(1, Ordering::Relaxed);
-}`
+}`,
+        resources: [
+          {
+            title: "Crust of Rust: Atomics and Memory Ordering",
+            url: "https://www.youtube.com/watch?v=rMGWeSjctlY",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Comprehensive 3-hour tutorial walking through Relaxed, Acquire, Release, and Sequentially Consistent memory orderings."
+          },
+          {
+            title: "Building Our Own Mutex from Scratch (Rust Nation UK)",
+            url: "https://www.youtube.com/watch?v=jQZ8sHwtkU8",
+            type: "video",
+            creatorOrPlatform: "Mara Bos (Rust Nation UK)",
+            description: "Live-coding a high-performance mutex using atomic compare-and-swap (CAS) and Linux futex system calls."
+          },
+          {
+            title: "Memory Barriers: A Hardware View for Software Hackers",
+            url: "http://www.rdrop.com/users/paulmck/scalability/paper/whymb.2010.07.23a.pdf",
+            type: "book",
+            creatorOrPlatform: "Paul E. McKenney (Linux Kernel)",
+            description: "Canonical paper explaining CPU store buffers, invalidate queues, and why memory barriers are physically required."
+          }
+        ]
       },
       {
         id: "t3-bare-metal",
-        domain: "Bare-Metal Compilation (#![no_std])",
+        domain: "Bare-Metal Compilation (#![no_std]) & Microkernels",
         conceptsToMaster: "`#![no_std]`, `core` library, custom panic handlers, static heapless memory allocations (`heapless::Vec`).",
         hardwareReality: "Compiling firmware that runs on microcontrollers, spacecraft computers, and OS kernels with zero OS dependencies.",
         practicalDrill: "Compile a `#![no_std]` binary targeting ARM Cortex-M or x86_64 and boot it in QEMU.",
@@ -326,11 +743,34 @@ use core::panic::PanicInfo;
 pub extern "C" fn _start() -> ! { loop {} }
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! { loop {} }`
+fn panic(_info: &PanicInfo) -> ! { loop {} }`,
+        resources: [
+          {
+            title: "Writing an OS in Rust (Interactive Course)",
+            url: "https://os.phil-opp.com/",
+            type: "course",
+            creatorOrPlatform: "Philipp Oppermann",
+            description: "The world-famous hands-on tutorial creating a 64-bit x86 operating system kernel from scratch in Rust."
+          },
+          {
+            title: "Embedded Rust: From Scratch to Drone Flight (RustConf)",
+            url: "https://www.youtube.com/watch?v=68_X_u8bE48",
+            type: "video",
+            creatorOrPlatform: "Ferrous Systems (RustConf)",
+            description: "Building autonomous flight software on microcontrollers using bare-metal no_std Rust."
+          },
+          {
+            title: "The Embedded Rust Book",
+            url: "https://rust-embedded.github.io/book/",
+            type: "doc",
+            creatorOrPlatform: "Rust Embedded Working Group",
+            description: "Official guide to hardware register abstraction, interrupt handling, and PAC/HAL crate architecture."
+          }
+        ]
       },
       {
         id: "t3-simd",
-        domain: "SIMD Vector Intrinsics",
+        domain: "SIMD Vector Intrinsics & AVX-512",
         conceptsToMaster: "Vector registers (AVX2, AVX-512, NEON), `std::simd` portable SIMD, architecture intrinsics (`core::arch::x86_64`).",
         hardwareReality: "Computing 8 or 16 mathematical operations in a single CPU clock cycle (`vaddps`).",
         practicalDrill: "Implement vector addition on an array of 1,000 floats using AVX2 intrinsics and measure the speedup.",
@@ -340,7 +780,37 @@ pub unsafe fn fast_add(a: &[f32; 8], b: &[f32; 8], out: &mut [f32; 8]) {
     let va = _mm256_loadu_ps(a.as_ptr());
     let vb = _mm256_loadu_ps(b.as_ptr());
     _mm256_storeu_ps(out.as_mut_ptr(), _mm256_add_ps(va, vb));
-}`
+}`,
+        resources: [
+          {
+            title: "Portable SIMD in Rust (RustConf)",
+            url: "https://www.youtube.com/watch?v=s0q7i_L9Q8A",
+            type: "video",
+            creatorOrPlatform: "Caleb Zulawski (RustConf)",
+            description: "Comprehensive talk on std::simd, cross-platform vector registers, and auto-vectorization guarantees."
+          },
+          {
+            title: "Decrusting rip-grep: How BurntSushi Uses SIMD",
+            url: "https://www.youtube.com/watch?v=e_0zNn3XfSg",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Deep code review of ripgrep showing how Teddy and Aho-Corasick SIMD algorithms search gigabytes/sec."
+          },
+          {
+            title: "Intel Intrinsics Guide (Official)",
+            url: "https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html",
+            type: "doc",
+            creatorOrPlatform: "Intel Corporation",
+            description: "The authoritative silicon reference for every x86 SIMD instruction, latency cycle count, and throughput."
+          },
+          {
+            title: "rust-lang/portable-simd (GitHub)",
+            url: "https://github.com/rust-lang/portable-simd",
+            type: "repo",
+            creatorOrPlatform: "Rust Compiler Working Group",
+            description: "The official portable SIMD repository providing explicit vector SIMD types for nightly Rust."
+          }
+        ]
       }
     ]
   },
@@ -359,7 +829,37 @@ pub unsafe fn fast_add(a: &[f32; 8], b: &[f32; 8], out: &mut [f32; 8]) {
         practicalDrill: "Build a custom `#[derive(SerializeCustom)]` macro that automatically serializes structs into binary byte arrays.",
         codeSnippet: `// Procedural macro using syn and quote:
 // #[proc_macro_derive(MyMacro)]
-// pub fn my_derive(input: TokenStream) -> TokenStream { ... }`
+// pub fn my_derive(input: TokenStream) -> TokenStream { ... }`,
+        resources: [
+          {
+            title: "Crust of Rust: Declarative & Procedural Macros",
+            url: "https://www.youtube.com/watch?v=q6paRBbLgNw",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Masterclass on the Rust AST, TokenStreams, writing custom derive macros with syn and quote."
+          },
+          {
+            title: "Writing Custom Derive Macros in Rust",
+            url: "https://www.youtube.com/watch?v=d_k8yV_n7f8",
+            type: "video",
+            creatorOrPlatform: "Let's Get Rusty (YouTube)",
+            description: "Step-by-step tutorial parsing struct fields into AST nodes and emitting code at compile-time."
+          },
+          {
+            title: "The Little Book of Rust Macros",
+            url: "https://veykril.github.io/tlborm/",
+            type: "book",
+            creatorOrPlatform: "Daniel Keep & Lukas Wirth",
+            description: "The definitive guide on syntax extensions, pattern matching in macros, and hygiene."
+          },
+          {
+            title: "dtolnay/syn & dtolnay/quote (GitHub)",
+            url: "https://github.com/dtolnay/syn",
+            type: "repo",
+            creatorOrPlatform: "David Tolnay",
+            description: "The parser for Rust code used in virtually every procedural macro across the ecosystem."
+          }
+        ]
       },
       {
         id: "t4-compiler-assembly",
@@ -372,7 +872,37 @@ pub unsafe fn fast_add(a: &[f32; 8], b: &[f32; 8], out: &mut [f32; 8]) {
 opt-level = 3
 lto = "fat"
 codegen-units = 1
-panic = "abort"`
+panic = "abort"`,
+        resources: [
+          {
+            title: "Inspecting Assembly with cargo-show-asm",
+            url: "https://www.youtube.com/watch?v=68_w_z8t8e4",
+            type: "video",
+            creatorOrPlatform: "Logan Smith (YouTube)",
+            description: "Learn how to inspect the exact assembly output of your functions to verify inlining and SIMD loops."
+          },
+          {
+            title: "How We Make rustc Fast (RustConf)",
+            url: "https://www.youtube.com/watch?v=P_Xy4V1-r3I",
+            type: "video",
+            creatorOrPlatform: "Nicholas Nethercote (Mozilla / rustc)",
+            description: "Detailed breakdown of LLVM IR passes, memory usage profiling, and compiler optimization bottlenecks."
+          },
+          {
+            title: "Compiler Explorer (Godbolt)",
+            url: "https://godbolt.org/",
+            type: "course",
+            creatorOrPlatform: "Matt Godbolt",
+            description: "Interactive online environment to write Rust code and see the real-time x86_64/ARM64 assembly output."
+          },
+          {
+            title: "pdeljanov/cargo-show-asm (GitHub)",
+            url: "https://github.com/pdeljanov/cargo-show-asm",
+            type: "repo",
+            creatorOrPlatform: "GitHub Tool",
+            description: "Cargo command to display the assembly or LLVM-IR of any function directly in the terminal."
+          }
+        ]
       },
       {
         id: "t4-profiling-toolchain",
@@ -382,7 +912,37 @@ panic = "abort"`
         practicalDrill: "Generate an interactive SVG flamegraph of a multi-threaded service under saturated load to detect hotspots.",
         codeSnippet: `# Profile CPU execution down to line numbers:
 cargo install flamegraph
-cargo flamegraph --bin my_service`
+cargo flamegraph --bin my_service`,
+        resources: [
+          {
+            title: "Systems Performance: Enterprise and the Cloud",
+            url: "https://www.youtube.com/watch?v=vV_B36jQx8M",
+            type: "video",
+            creatorOrPlatform: "Brendan Gregg (Netflix / Intel)",
+            description: "The seminal presentation on CPU on-CPU vs off-CPU flame graphs, cache misses, and latency profiling."
+          },
+          {
+            title: "Profiling and Benchmarking Rust Applications",
+            url: "https://www.youtube.com/watch?v=q6_y8w8aA78",
+            type: "video",
+            creatorOrPlatform: "Jon Gjengset (YouTube)",
+            description: "Using Criterion for microbenchmarking, perf for recording hardware events, and cargo-flamegraph for visualization."
+          },
+          {
+            title: "The Rust Performance Book",
+            url: "https://nnethercote.github.io/perf-book/",
+            type: "book",
+            creatorOrPlatform: "Nicholas Nethercote",
+            description: "Canonical guide to making Rust code run faster and consume less RAM (inlining, heap allocations, hashing)."
+          },
+          {
+            title: "flamegraph-rs/flamegraph (GitHub)",
+            url: "https://github.com/flamegraph-rs/flamegraph",
+            type: "repo",
+            creatorOrPlatform: "Rust Tool",
+            description: "One-click tool to generate interactive SVG flamegraphs for Rust binaries on Linux and macOS."
+          }
+        ]
       },
       {
         id: "t4-formal-verification",
@@ -396,7 +956,37 @@ fn verify_safe_division() {
     let input: u16 = kani::any();
     let divisor = (input as u32) + 1; // cannot be zero
     let _ = 100_000 / divisor;
-}`
+}`,
+        resources: [
+          {
+            title: "Verifying Rust Code with Kani (RustConf)",
+            url: "https://www.youtube.com/watch?v=vVzB3Z2_nLk",
+            type: "video",
+            creatorOrPlatform: "Celina Val (AWS / Kani Lead)",
+            description: "How AWS uses Kani bounded model checking to mathematically prove absence of panics in core cloud libraries."
+          },
+          {
+            title: "Ferrocene: Qualifying the Rust Compiler for ASIL D",
+            url: "https://www.youtube.com/watch?v=hB9_8a7d6e5",
+            type: "video",
+            creatorOrPlatform: "Ferrous Systems (EuroRust)",
+            description: "How the open-source Rust compiler achieved official qualification for automotive and aerospace safety standards."
+          },
+          {
+            title: "Kani Rust Verifier Documentation",
+            url: "https://model-checker.github.io/kani/",
+            type: "doc",
+            creatorOrPlatform: "AWS / Kani Project",
+            description: "Comprehensive guide to writing verification harnesses, assume/assert contracts, and model proofs in Rust."
+          },
+          {
+            title: "model-checker/kani (GitHub)",
+            url: "https://github.com/model-checker/kani",
+            type: "repo",
+            creatorOrPlatform: "Amazon Web Services",
+            description: "The bit-precise bounded model checker for Rust based on CBMC."
+          }
+        ]
       }
     ]
   }

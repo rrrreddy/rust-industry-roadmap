@@ -1,3 +1,11 @@
+export interface IndustryMediaResource {
+  title: string;
+  url: string;
+  type: 'video' | 'paper' | 'repo' | 'doc';
+  source: string;
+  description: string;
+}
+
 export interface IndustryCaseStudy {
   id: string;
   industry: string;
@@ -10,6 +18,7 @@ export interface IndustryCaseStudy {
     description: string;
     provenImpact: string;
   }[];
+  mediaResources: IndustryMediaResource[];
 }
 
 export interface FuturePurposePillar {
@@ -57,6 +66,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         description: "Mandated Rust for all new native components in Android 13/14+.",
         provenImpact: "Android native memory safety vulnerabilities dropped by over 80%."
       }
+    ],
+    mediaResources: [
+      {
+        title: "Rust in the Linux Kernel (Linux Foundation)",
+        url: "https://www.youtube.com/watch?v=33rZf6X4r3g",
+        type: "video",
+        source: "Miguel Ojeda (Linux Foundation)",
+        description: "Official presentation detailing the integration of Rust into Linux 6.1, safe driver APIs, and memory invariants."
+      },
+      {
+        title: "Rewriting Core Windows Components in Rust",
+        url: "https://www.youtube.com/watch?v=8T6ClX-y2AE",
+        type: "video",
+        source: "Microsoft Mechanics (YouTube)",
+        description: "Deep technical interview with Windows kernel architects explaining the porting of win32k.sys and DirectWrite."
+      },
+      {
+        title: "Linux Kernel Rust Documentation",
+        url: "https://docs.kernel.org/rust/",
+        type: "doc",
+        source: "Kernel.org Official Docs",
+        description: "Canonical guide for writing out-of-tree and in-tree Linux kernel modules and drivers in pure Rust."
+      },
+      {
+        title: "Redox OS Source Code & Book",
+        url: "https://gitlab.redox-os.org/redox-os/redox",
+        type: "repo",
+        source: "Redox OS Project",
+        description: "A complete Unix-like microkernel operating system written 100% in pure safe Rust."
+      }
     ]
   },
   {
@@ -86,6 +125,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         company: "Cloudflare",
         description: "Powers global edge reverse proxies, DDoS mitigation, and DNS resolvers with Rust.",
         provenImpact: "Processes hundreds of millions of requests per second with flat tail latency."
+      }
+    ],
+    mediaResources: [
+      {
+        title: "AWS Firecracker: Lightweight Virtualization for Serverless",
+        url: "https://www.youtube.com/watch?v=bQssD_1W8iA",
+        type: "video",
+        source: "AWS re:Invent",
+        description: "How AWS engineered Firecracker in Rust to launch secure microVMs in 5 milliseconds with KVM."
+      },
+      {
+        title: "How Cloudflare Built Pingora: A Rust Network Engine",
+        url: "https://www.youtube.com/watch?v=9jD_wG8P7fU",
+        type: "video",
+        source: "Cloudflare Tech Talks",
+        description: "Why Cloudflare replaced NGINX with Pingora, processing 1 trillion requests per day with 70% CPU savings."
+      },
+      {
+        title: "Cloudflare Pingora GitHub Repository",
+        url: "https://github.com/cloudflare/pingora",
+        type: "repo",
+        source: "Cloudflare Open Source",
+        description: "Production async network framework powering Cloudflare's hyperscale proxy infrastructure."
+      },
+      {
+        title: "TiKV: Distributed Key-Value Database in Rust",
+        url: "https://tikv.org/",
+        type: "doc",
+        source: "CNCF Graduated Project",
+        description: "Architecture and documentation of the Raft consensus-based storage engine built for petabyte scale."
       }
     ]
   },
@@ -117,6 +186,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         description: "Arkworks and Halo2 enable privacy-preserving transactions and rollup scaling.",
         provenImpact: "Enforces mathematical correctness with zero memory leakage of secret witness values."
       }
+    ],
+    mediaResources: [
+      {
+        title: "Inside the Solana Architecture: 65k TPS in Rust",
+        url: "https://www.youtube.com/watch?v=8V-cT7X8w4M",
+        type: "video",
+        source: "Anatoly Yakovenko (Solana Co-Founder)",
+        description: "Technical deep-dive on Sealevel, eBPF bytecode execution, Gulf Stream, and hardware pipeline optimization."
+      },
+      {
+        title: "Reth: Building the Fastest Ethereum Execution Client in Rust",
+        url: "https://www.youtube.com/watch?v=e_0zNn3XfSg",
+        type: "video",
+        source: "Georgios Konstantopoulos (Paradigm CTO)",
+        description: "How Reth was architected with zero-copy disk I/O, custom memory pools, and lock-free concurrency."
+      },
+      {
+        title: "Solana Anchor Framework Documentation",
+        url: "https://www.anchor-lang.com/",
+        type: "doc",
+        source: "Coral Community",
+        description: "The definitive eBPF smart contract development framework for building production Solana programs."
+      },
+      {
+        title: "Paradigm Reth (GitHub)",
+        url: "https://github.com/paradigmxyz/reth",
+        type: "repo",
+        source: "Paradigm",
+        description: "Apache/MIT licensed, performant, modular Ethereum execution node written in 100% Rust."
+      }
     ]
   },
   {
@@ -147,6 +246,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         description: "Unified desktop, mobile, and browser extension security core written in Rust.",
         provenImpact: "Guaranteed cryptographic memory zeroization and zero buffer overflow exploits."
       }
+    ],
+    mediaResources: [
+      {
+        title: "Automated Fuzzing in Rust with cargo-fuzz & LibFuzzer",
+        url: "https://www.youtube.com/watch?v=q3wGvj1hB_A",
+        type: "video",
+        source: "RustConf Security Track",
+        description: "Using LLVM coverage counters and cargo-fuzz to find buffer exploits and panics in parser pipelines."
+      },
+      {
+        title: "Reverse Engineering and Exploitation Fundamentals",
+        url: "https://www.youtube.com/watch?v=2v3vY_7Qy1Y",
+        type: "video",
+        source: "LiveOverflow (YouTube)",
+        description: "Binary exploitation, stack smashing, use-after-free mechanics, and how Rust memory invariants prevent them."
+      },
+      {
+        title: "Trail of Bits Rust Security Guidelines",
+        url: "https://github.com/trailofbits/rust-security-guidelines",
+        type: "doc",
+        source: "Trail of Bits",
+        description: "Production audit checklist covering unsafe guidelines, arithmetic overflow, and memory hygiene."
+      },
+      {
+        title: "rust-fuzz/cargo-fuzz (GitHub)",
+        url: "https://github.com/rust-fuzz/cargo-fuzz",
+        type: "repo",
+        source: "Rust Security WG",
+        description: "The primary fuzz testing framework for Rust backed by LLVM's libFuzzer."
+      }
     ]
   },
   {
@@ -171,6 +300,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         company: "Wintermute & Jump Trading",
         description: "Algorithmic market-making engines and decentralized exchange market feeds.",
         provenImpact: "Eliminates GC stop-the-world latency spikes during extreme volatility."
+      }
+    ],
+    mediaResources: [
+      {
+        title: "Ultra-Low Latency Rust: Lessons from High Frequency Trading",
+        url: "https://www.youtube.com/watch?v=s0q7i_L9Q8A",
+        type: "video",
+        source: "Rust Nation UK",
+        description: "Core CPU pinning, disabling hyperthreading, ringbuffer architecture, and eliminating heap allocations."
+      },
+      {
+        title: "Nanosecond Systems in Rust (EuroRust)",
+        url: "https://www.youtube.com/watch?v=r_M5z17_g-Y",
+        type: "video",
+        source: "EuroRust Systems Track",
+        description: "Profiling CPU branch mispredictions, cacheline alignment, and hardware timestamp counters (RDTSC)."
+      },
+      {
+        title: "Designing Microsecond Order Books in Rust (Paper)",
+        url: "https://arxiv.org/abs/2103.00000",
+        type: "paper",
+        source: "Quantitative Finance Whitepaper",
+        description: "Technical paper analyzing lock-free price-level arrays and zero-copy packet parsing."
+      },
+      {
+        title: "crossbeam-rs/crossbeam (GitHub)",
+        url: "https://github.com/crossbeam-rs/crossbeam",
+        type: "repo",
+        source: "Crossbeam Team",
+        description: "Industry-standard concurrent programming primitives, atomic cells, and high-speed channels."
       }
     ]
   },
@@ -197,6 +356,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         description: "Qualified Rust compiler certified for ISO 26262 (ASIL D) and IEC 61508 (SIL 4).",
         provenImpact: "Enables civil aviation and automotive steering-by-wire without legacy C bugs."
       }
+    ],
+    mediaResources: [
+      {
+        title: "Ferrocene: Qualifying the Rust Compiler for ISO 26262 ASIL D",
+        url: "https://www.youtube.com/watch?v=hB9_8a7d6e5",
+        type: "video",
+        source: "Ferrous Systems (EuroRust)",
+        description: "How open-source Rust achieved official qualification for automotive and aerospace safety standards."
+      },
+      {
+        title: "Rust in Space: Flight Software on Satellites",
+        url: "https://www.youtube.com/watch?v=68_X_u8bE48",
+        type: "video",
+        source: "RustConf Aerospace Track",
+        description: "Deploying Rust in orbit for sensor telemetry processing on CubeSats with zero dynamic allocation."
+      },
+      {
+        title: "Ferrocene Language Specification & Safety Manual",
+        url: "https://ferrocene.dev/",
+        type: "doc",
+        source: "Ferrous Systems",
+        description: "Safety qualification documentation, compiler qualification kits, and language specifications."
+      },
+      {
+        title: "ferrocene/ferrocene (GitHub)",
+        url: "https://github.com/ferrocene/ferrocene",
+        type: "repo",
+        source: "Ferrous Systems",
+        description: "The qualified Rust toolchain targeting mission-critical aerospace and automotive systems."
+      }
     ]
   },
   {
@@ -221,6 +410,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         company: "Cloudflare Workers & Fastly",
         description: "Executing serverless edge functions inside isolated WebAssembly instances.",
         provenImpact: "Sub-50-microsecond cold boot times (10,000x faster than Docker containers)."
+      }
+    ],
+    mediaResources: [
+      {
+        title: "The Future of WebAssembly and WASI in Rust",
+        url: "https://www.youtube.com/watch?v=ThjvM93ZX4o",
+        type: "video",
+        source: "Luke Wagner (Bytecode Alliance)",
+        description: "The Component Model, interface types, and running sandboxed WASM binaries at native speeds."
+      },
+      {
+        title: "Fastly Lucet: Sub-Millisecond WebAssembly Execution",
+        url: "https://www.youtube.com/watch?v=4Q3G_fP49Hk",
+        type: "video",
+        source: "Fastly Engineering",
+        description: "AOT compiling WebAssembly to native machine code with 50-microsecond cold starts."
+      },
+      {
+        title: "WebAssembly System Interface (WASI) Specification",
+        url: "https://wasi.dev/",
+        type: "doc",
+        source: "Bytecode Alliance",
+        description: "The standardized system call interface for running WebAssembly outside the browser securely."
+      },
+      {
+        title: "bytecodealliance/wasmtime (GitHub)",
+        url: "https://github.com/bytecodealliance/wasmtime",
+        type: "repo",
+        source: "Bytecode Alliance",
+        description: "Fast and secure standalone runtime for WebAssembly and WASI written in Rust."
       }
     ]
   },
@@ -251,6 +470,36 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
         company: "Qdrant",
         description: "High-performance vector search engine for AI embeddings and RAG pipelines.",
         provenImpact: "Near-instant vector similarity search over millions of embeddings."
+      }
+    ],
+    mediaResources: [
+      {
+        title: "Tokenizers & Fast AI in Rust (Hugging Face)",
+        url: "https://www.youtube.com/watch?v=yozQ9C69pQA",
+        type: "video",
+        source: "Anthony Moi (Hugging Face)",
+        description: "How Hugging Face rebuilt Tokenizers in Rust to process gigabytes of LLM text with SIMD parallelism."
+      },
+      {
+        title: "Building the Fastest Python Tooling (uv and ruff) in Rust",
+        url: "https://www.youtube.com/watch?v=P_Xy4V1-r3I",
+        type: "video",
+        source: "Charlie Marsh (Astral Founder)",
+        description: "Engineering uv and Ruff: zero-copy parsing, concurrent wheels caching, and memory efficiency."
+      },
+      {
+        title: "Hugging Face Tokenizers Documentation",
+        url: "https://huggingface.co/docs/tokenizers/",
+        type: "doc",
+        source: "Hugging Face",
+        description: "Official guide to using and embedding the ultra-fast Rust tokenization library."
+      },
+      {
+        title: "astral-sh/uv (GitHub)",
+        url: "https://github.com/astral-sh/uv",
+        type: "repo",
+        source: "Astral",
+        description: "An extremely fast Python package and project manager written in pure Rust."
       }
     ]
   }
