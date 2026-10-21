@@ -1,671 +1,553 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  ShieldAlert, Cpu, Rocket, Cloud, TrendingUp, Bot, Globe, 
-  Terminal, CheckCircle, Circle, BookOpen, Layers, 
-  Sparkles, ExternalLink, ChevronRight, Search, 
-  Award, Compass, Zap, HelpCircle, Code2, ArrowUpRight
+  Coins, Cpu, ShieldAlert, Rocket, Cloud, TrendingUp, Bot, Globe, 
+  Terminal, CheckCircle2, Circle, Sparkles, ExternalLink, Search, 
+  Trophy, Code2, Copy, Check, Lightbulb, ArrowRight, Layers,
+  Compass, ChevronDown, ChevronUp, BookOpen, Flame
 } from 'lucide-react';
 
-import { INDUSTRY_TRACKS } from './data/industryTracks';
-import { CORE_ROADMAP_STAGES } from './data/coreRoadmap';
-import { INITIAL_SKILLS_ASSESSMENT } from './data/skillsAssessment';
-import { IndustryTrack } from './data/types';
+import { UNIFIED_INDUSTRY_TRACKS } from './data/unifiedTracks';
+import { UnifiedIndustryTrack, UnifiedSkill } from './data/unifiedTypes';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'industries' | 'core' | 'comparison' | 'readiness'>('industries');
-  const [selectedIndustry, setSelectedIndustry] = useState<IndustryTrack>(INDUSTRY_TRACKS[0]);
+  const [selectedTrackId, setSelectedTrackId] = useState<string>('web3-crypto');
   const [searchQuery, setSearchQuery] = useState('');
-  const [completedSkills, setCompletedSkills] = useState<string[]>(() => {
-    const saved = localStorage.getItem('rust_completed_skills');
-    return saved ? JSON.parse(saved) : ['c1', 'c2'];
+  const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
+  const [expandedSkillId, setExpandedSkillId] = useState<string | null>(null);
+
+  // Persistent progress stored per industry in localStorage
+  const [completedSkills, setCompletedSkills] = useState<{ [trackId: string]: string[] }>(() => {
+    const saved = localStorage.getItem('rust_unified_progress_v1');
+    return saved ? JSON.parse(saved) : {
+      'web3-crypto': ['w3-p1-1'],
+      'operating-systems': [],
+      'cyber-security': [],
+      'defense-aerospace': [],
+      'cloud-infrastructure': [],
+      'fintech-hft': [],
+      'robotics-automotive': [],
+      'webassembly-edge': []
+    };
   });
 
   useEffect(() => {
-    localStorage.setItem('rust_completed_skills', JSON.stringify(completedSkills));
+    localStorage.setItem('rust_unified_progress_v1', JSON.stringify(completedSkills));
   }, [completedSkills]);
 
-  const toggleSkill = (id: string) => {
-    setCompletedSkills(prev => 
-      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
-    );
+  const toggleSkill = (trackId: string, skillId: string) => {
+    setCompletedSkills(prev => {
+      const current = prev[trackId] || [];
+      const updated = current.includes(skillId)
+        ? current.filter(id => id !== skillId)
+        : [...current, skillId];
+      return { ...prev, [trackId]: updated };
+    });
   };
 
-  const getIndustryIcon = (iconName: string) => {
+  const copyCode = (code: string, id: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCodeId(id);
+    setTimeout(() => setCopiedCodeId(null), 2000);
+  };
+
+  const currentTrack = UNIFIED_INDUSTRY_TRACKS.find(t => t.id === selectedTrackId) || UNIFIED_INDUSTRY_TRACKS[0];
+
+  const getTrackIcon = (iconName: string) => {
     switch (iconName) {
-      case 'Cpu': return <Cpu className="w-5 h-5" />;
-      case 'ShieldAlert': return <ShieldAlert className="w-5 h-5" />;
-      case 'Rocket': return <Rocket className="w-5 h-5" />;
-      case 'Cloud': return <Cloud className="w-5 h-5" />;
-      case 'TrendingUp': return <TrendingUp className="w-5 h-5" />;
-      case 'Bot': return <Bot className="w-5 h-5" />;
-      case 'Globe': return <Globe className="w-5 h-5" />;
-      default: return <Terminal className="w-5 h-5" />;
+      case 'Coins': return <Coins className="w-5 h-5 text-amber-400" />;
+      case 'Cpu': return <Cpu className="w-5 h-5 text-blue-400" />;
+      case 'ShieldAlert': return <ShieldAlert className="w-5 h-5 text-red-400" />;
+      case 'Rocket': return <Rocket className="w-5 h-5 text-yellow-400" />;
+      case 'Cloud': return <Cloud className="w-5 h-5 text-cyan-400" />;
+      case 'TrendingUp': return <TrendingUp className="w-5 h-5 text-emerald-400" />;
+      case 'Bot': return <Bot className="w-5 h-5 text-purple-400" />;
+      case 'Globe': return <Globe className="w-5 h-5 text-teal-400" />;
+      default: return <Terminal className="w-5 h-5 text-orange-400" />;
     }
   };
 
-  const filteredIndustries = INDUSTRY_TRACKS.filter(track => 
-    track.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    track.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    track.coreConcepts.some(c => c.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Calculate stats
+  const totalSkillsCount = UNIFIED_INDUSTRY_TRACKS.reduce(
+    (acc, t) => acc + t.phases.reduce((pAcc, p) => pAcc + p.skills.length, 0), 
+    0
   );
 
-  const readinessScore = Math.round((completedSkills.length / INITIAL_SKILLS_ASSESSMENT.length) * 100);
+  const totalCompletedCount = Object.values(completedSkills).reduce(
+    (acc, list) => acc + list.length, 
+    0
+  );
+
+  const globalMasteryPercentage = Math.round((totalCompletedCount / totalSkillsCount) * 100);
+
+  const getTrackStats = (track: UnifiedIndustryTrack) => {
+    const totalInTrack = track.phases.reduce((acc, p) => acc + p.skills.length, 0);
+    const completedInTrack = (completedSkills[track.id] || []).length;
+    return {
+      completed: completedInTrack,
+      total: totalInTrack,
+      percentage: Math.round((completedInTrack / totalInTrack) * 100)
+    };
+  };
+
+  const currentTrackStats = getTrackStats(currentTrack);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-orange-600 selection:text-white">
-      {/* Top Banner Navigation */}
-      <header className="border-b border-slate-800/80 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div className="min-h-screen bg-[#0d1117] text-slate-100 flex flex-col font-sans selection:bg-orange-600 selection:text-white">
+      {/* Top Main Navigation Bar */}
+      <header className="border-b border-orange-500/20 bg-[#161b22]/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          {/* Logo & Platform Name */}
           <div className="flex items-center space-x-3">
-            <span className="text-2xl p-1.5 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl shadow-lg shadow-orange-500/20 text-white flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 via-amber-600 to-red-600 flex items-center justify-center text-xl shadow-lg shadow-orange-500/25 border border-orange-400/40">
               🦀
-            </span>
+            </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-orange-400 via-amber-200 to-orange-500 bg-clip-text text-transparent">
                   Rust Industry Mastery
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 font-mono font-medium">
-                  v2.0
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                  Unified Roadmap
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">
-                The comprehensive road to staff-level engineering across systems
+              <p className="text-[11px] text-slate-400 hidden sm:block">
+                Beginner to Staff Expert In Every Major Industry — Zero Segregation
               </p>
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="flex items-center space-x-1 sm:space-x-2 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
-            <button
-              onClick={() => setActiveTab('industries')}
-              className={`flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                activeTab === 'industries'
-                  ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <Compass className="w-4 h-4" />
-              <span>Industries</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('core')}
-              className={`flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                activeTab === 'core'
-                  ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Core Roadmap</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('comparison')}
-              className={`flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                activeTab === 'comparison'
-                  ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              <span>Paradigm Shifts</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('readiness')}
-              className={`flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
-                activeTab === 'readiness'
-                  ? 'bg-orange-600 text-white shadow-md shadow-orange-600/30'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              <span>Skill Matrix</span>
-              <span className="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded-full font-mono text-orange-300">
-                {readinessScore}%
-              </span>
-            </button>
-          </nav>
+          {/* Global Progress Pill */}
+          <div className="flex items-center space-x-3">
+            <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#0d1117] border border-slate-800 text-xs">
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span className="text-slate-400">Total Mastery:</span>
+              <span className="font-mono font-bold text-orange-400">{globalMasteryPercentage}%</span>
+              <span className="text-slate-500 text-[11px]">({totalCompletedCount}/{totalSkillsCount})</span>
+            </div>
 
-          {/* GitHub / Share link */}
-          <div className="hidden lg:flex items-center space-x-3">
             <a
-              href="https://github.com"
+              href="https://github.com/rrrreddy/rust-industry-roadmap"
               target="_blank"
               rel="noreferrer"
-              className="text-xs flex items-center space-x-1.5 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-slate-800 bg-slate-900/60 hover:bg-slate-800 transition"
+              className="text-xs flex items-center space-x-1 px-3 py-1.5 rounded-xl border border-slate-800 bg-[#0d1117] hover:border-orange-500/50 hover:text-orange-400 transition"
             >
-              <span>GitHub Pages</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <span>GitHub</span>
+              <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
-        {/* ======================= TAB: INDUSTRIES ======================= */}
-        {activeTab === 'industries' && (
-          <div>
-            {/* Hero Sub-header */}
-            <div className="mb-8 text-center max-w-3xl mx-auto">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium mb-3">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Domain-Specific Deep Dives & Industry Transformations</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
-                How Rust Rewires Modern Engineering
-              </h1>
-              <p className="text-sm sm:text-base text-slate-400">
-                From operating system kernels and cyber security to aerospace and microsecond trading—explore the exact skills, crates, architecture patterns, and capstone deliverables required in each field.
-              </p>
-            </div>
+      {/* Main Body Layout */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-            {/* Industry Selector Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5 mb-8">
-              {INDUSTRY_TRACKS.map((track) => {
-                const isSelected = selectedIndustry.id === track.id;
-                return (
-                  <button
-                    key={track.id}
-                    onClick={() => setSelectedIndustry(track)}
-                    className={`flex flex-col items-center text-center p-3 rounded-xl border transition-all text-xs ${
-                      isSelected
-                        ? 'border-orange-500 bg-orange-500/10 shadow-lg shadow-orange-500/10 text-white font-semibold'
-                        : 'border-slate-800/80 bg-slate-900/40 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className={`p-2 rounded-lg mb-2 ${isSelected ? 'bg-orange-500 text-white' : 'bg-slate-800 text-slate-300'}`}>
-                      {getIndustryIcon(track.icon)}
-                    </div>
-                    <span className="line-clamp-2 leading-tight">{track.title}</span>
-                  </button>
-                );
-              })}
-            </div>
+        {/* 1. Industry Quick Switcher (Top Banner) */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
+              <Compass className="w-3.5 h-3.5 text-orange-400" />
+              <span>Select an Industry to Explore (Beginner ➔ Expert)</span>
+            </span>
+            <span className="text-xs text-orange-400/90 font-mono hidden sm:inline">
+              8 Major Fields Included
+            </span>
+          </div>
 
-            {/* Selected Industry Detail View */}
-            <div className="bg-slate-900/60 rounded-2xl border border-slate-800 shadow-xl overflow-hidden backdrop-blur-sm">
-              {/* Header Banner */}
-              <div className="p-6 sm:p-8 border-b border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+            {UNIFIED_INDUSTRY_TRACKS.map((track) => {
+              const isSelected = selectedTrackId === track.id;
+              const stats = getTrackStats(track);
+              return (
+                <button
+                  key={track.id}
+                  onClick={() => setSelectedTrackId(track.id)}
+                  className={`flex flex-col items-center text-center p-3 rounded-2xl border transition-all text-xs relative overflow-hidden ${
+                    isSelected
+                      ? 'border-orange-500 bg-orange-500/15 shadow-lg shadow-orange-500/20 text-white font-bold ring-1 ring-orange-500'
+                      : 'border-slate-800/80 bg-[#161b22]/70 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  }`}
+                >
+                  <div className={`p-2 rounded-xl mb-1.5 ${isSelected ? 'bg-orange-500/30' : 'bg-slate-800/80'}`}>
+                    {getTrackIcon(track.icon)}
+                  </div>
+                  <span className="line-clamp-2 leading-tight text-[11px] sm:text-xs">{track.title}</span>
+                  
+                  {/* Progress Micro Pill */}
+                  <span className="mt-1.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-orange-300">
+                    {stats.completed}/{stats.total}
+                  </span>
+
+                  {/* Micro Progress Bar */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-900">
+                    <div 
+                      className="h-full bg-gradient-to-r from-orange-500 to-amber-500" 
+                      style={{ width: `${stats.percentage}%` }}
+                    />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2. Unified Area Master Container */}
+        <div className="bg-[#161b22]/90 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-sm">
+          
+          {/* Header Banner */}
+          <div className="p-6 sm:p-8 border-b border-slate-800 bg-gradient-to-r from-[#1c2128] via-[#161b22] to-[#0d1117]">
+            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+              <div className="max-w-3xl">
+                <div className="flex items-center space-x-3 mb-2">
+                  <div className="p-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40">
+                    {getTrackIcon(currentTrack.icon)}
+                  </div>
                   <div>
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className="p-2 rounded-lg bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                        {getIndustryIcon(selectedIndustry.icon)}
-                      </span>
-                      <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                        {selectedIndustry.title}
-                      </h2>
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono">
-                        {selectedIndustry.badge}
+                    <div className="flex items-center space-x-2">
+                      <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                        {currentTrack.title}
+                      </h1>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/40 font-mono">
+                        {currentTrack.badge}
                       </span>
                     </div>
-                    <p className="text-slate-300 text-sm sm:text-base max-w-3xl">
-                      {selectedIndustry.tagline}
+                    <p className="text-xs sm:text-sm text-orange-400 font-medium mt-0.5">
+                      {currentTrack.tagline}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedIndustry.roleTitles.map((role, idx) => (
-                      <span key={idx} className="text-xs px-3 py-1 rounded-md bg-slate-800/80 text-orange-300 border border-slate-700/60 font-mono">
-                        {role}
-                      </span>
-                    ))}
-                  </div>
+                </div>
+
+                {/* Plain English ELI5 Introduction */}
+                <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-amber-950/20 to-orange-950/20 border border-amber-500/30 text-amber-200/90 text-xs sm:text-sm leading-relaxed">
+                  <strong className="text-amber-400 flex items-center space-x-1.5 mb-1 text-xs uppercase tracking-wider font-bold">
+                    <Lightbulb className="w-4 h-4 text-amber-400" />
+                    <span>Explain Like I'm 5 (What is this area?):</span>
+                  </strong>
+                  {currentTrack.eli5Overview}
                 </div>
               </div>
 
-              {/* Scope & Day in Life */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 sm:p-8 border-b border-slate-800/60 bg-slate-950/40">
+              {/* Progress & Salary Quick Box */}
+              <div className="bg-[#0d1117] p-5 rounded-2xl border border-slate-800 shrink-0 w-full lg:w-80 space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-400 mb-3 flex items-center space-x-2">
-                    <Compass className="w-4 h-4" />
-                    <span>Scope of Work & Responsibilities</span>
-                  </h3>
-                  <ul className="space-y-2 text-sm text-slate-300">
-                    {selectedIndustry.scopeOfWork.map((item, idx) => (
-                      <li key={idx} className="flex items-start space-x-2">
-                        <ChevronRight className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <span className="text-[11px] font-mono uppercase text-slate-400 block mb-0.5">Demand & Average Salary:</span>
+                  <span className="text-xs font-semibold text-emerald-400 block">
+                    {currentTrack.salaryAndDemand}
+                  </span>
                 </div>
+
                 <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-400 mb-3 flex items-center space-x-2">
-                    <Zap className="w-4 h-4" />
-                    <span>A Day in the Life</span>
-                  </h3>
-                  <p className="text-sm text-slate-300 bg-slate-900/80 p-4 rounded-xl border border-slate-800/80 leading-relaxed italic">
-                    "{selectedIndustry.dayInTheLife}"
-                  </p>
-                  <div className="mt-4">
-                    <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">Key Engineering Hurdles</h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {selectedIndustry.keyChallenges.map((challenge, idx) => (
-                        <span key={idx} className="text-xs px-2.5 py-1 rounded bg-red-950/30 text-red-300 border border-red-900/40">
-                          {challenge}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="flex items-center justify-between text-xs mb-1 font-mono">
+                    <span className="text-slate-300">Your Area Mastery:</span>
+                    <span className="text-orange-400 font-bold">{currentTrackStats.percentage}%</span>
                   </div>
-                </div>
-              </div>
-
-              {/* Before vs After: The Paradigm Shift */}
-              <div className="p-6 sm:p-8 border-b border-slate-800 bg-slate-900/40">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <Layers className="w-5 h-5 text-orange-400" />
-                  <span>How Rust Replaces Legacy Technology in this Industry</span>
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-red-950/20 border border-red-900/30 p-5 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-red-400">
-                        Traditional Approach
-                      </span>
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-red-900/50 text-red-200">
-                        {selectedIndustry.comparison.traditionalTech}
-                      </span>
-                    </div>
-                    <ul className="space-y-2 text-xs sm:text-sm text-red-200/90">
-                      {selectedIndustry.comparison.traditionalPainPoints.map((pt, idx) => (
-                        <li key={idx} className="flex items-start space-x-2">
-                          <span className="text-red-500 font-bold shrink-0">✕</span>
-                          <span>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-300"
+                      style={{ width: `${currentTrackStats.percentage}%` }}
+                    />
                   </div>
+                  <span className="text-[11px] text-slate-400 font-mono mt-1 block">
+                    {currentTrackStats.completed} of {currentTrackStats.total} Skills Mastered
+                  </span>
+                </div>
 
-                  <div className="bg-emerald-950/20 border border-emerald-900/30 p-5 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
-                        The Rust Revolution
-                      </span>
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-900/50 text-emerald-200">
-                        Rust Advantage
-                      </span>
-                    </div>
-                    <ul className="space-y-2 text-xs sm:text-sm text-emerald-200/90">
-                      {selectedIndustry.comparison.rustParadigmShift.map((pt, idx) => (
-                        <li key={idx} className="flex items-start space-x-2">
-                          <span className="text-emerald-400 font-bold shrink-0">✓</span>
-                          <span>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-3 pt-3 border-t border-emerald-900/40 text-xs font-mono text-emerald-300">
-                      ⚡ Proven Impact: {selectedIndustry.comparison.metricsImprovement}
-                    </div>
-                  </div>
+                <div className="pt-2 border-t border-slate-800/80">
+                  <span className="text-[10px] font-mono text-slate-400 block">
+                    Prerequisites: <strong className="text-slate-300">{currentTrack.beginnerZeroPrerequisites[0]}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Why Rust Dominates & Legacy Flaws */}
+            <div className="mt-6 pt-6 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-red-950/20 border border-red-900/30 text-xs">
+                <span className="font-bold text-red-400 uppercase tracking-wider block mb-1">
+                  ✕ Why Legacy Tech Failed ({currentTrack.title}):
+                </span>
+                <p className="text-red-200/90 leading-relaxed mb-2">
+                  {currentTrack.legacyFlawsVsRust.legacyFlaw}
+                </p>
+                <div className="text-[11px] text-red-400/80 font-mono">
+                  Impact: Unacceptable latency spikes, crashes, and CVE security breaches.
                 </div>
               </div>
 
-              {/* Skills to Learn: Core Concepts & Programmatic Skills */}
-              <div className="p-6 sm:p-8 border-b border-slate-800">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <Code2 className="w-5 h-5 text-orange-400" />
-                  <span>Required Skills & Core Concepts</span>
-                </h3>
-
-                <div className="mb-6">
-                  <h4 className="text-xs font-mono uppercase text-slate-400 mb-2">Essential Theoretical Concepts</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedIndustry.coreConcepts.map((concept, idx) => (
-                      <span key={idx} className="text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-200 font-mono">
-                        {concept}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <h4 className="text-xs font-mono uppercase text-slate-400 mb-3">Programmatic & Architectural Capabilities</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {selectedIndustry.programmaticSkills.map((skill, idx) => (
-                    <div key={idx} className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20 font-mono">
-                            {skill.importance}
-                          </span>
-                          <span className="text-[11px] text-slate-500 capitalize">{skill.category}</span>
-                        </div>
-                        <h5 className="font-semibold text-white text-sm mb-1">{skill.name}</h5>
-                        <p className="text-xs text-slate-400 leading-relaxed mb-3">{skill.description}</p>
-                      </div>
-                      <div className="text-xs bg-slate-900 p-2.5 rounded-lg border border-slate-800/80 text-slate-300">
-                        <span className="text-orange-400 font-semibold block text-[11px]">Practical Application:</span>
-                        {skill.practicalApplication}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Must-Know Crates & Ecosystem */}
-              <div className="p-6 sm:p-8 border-b border-slate-800 bg-slate-950/40">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <Zap className="w-5 h-5 text-amber-400" />
-                  <span>Must-Know Crates & Tooling Ecosystem</span>
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  {selectedIndustry.mustKnowCrates.map((crate, idx) => (
-                    <a
-                      key={idx}
-                      href={crate.link || `https://crates.io/crates/${crate.name}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group p-3.5 bg-slate-900 rounded-xl border border-slate-800 hover:border-orange-500/50 transition block"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-mono text-sm font-bold text-orange-400 group-hover:text-orange-300">
-                          {crate.name}
-                        </span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 transition" />
-                      </div>
-                      <p className="text-xs text-slate-400 leading-snug">{crate.purpose}</p>
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Real World Use Cases */}
-              <div className="p-6 sm:p-8 border-b border-slate-800">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <Sparkles className="w-5 h-5 text-purple-400" />
-                  <span>Production Use Cases & Success Stories</span>
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedIndustry.useCases.map((uc, idx) => (
-                    <div key={idx} className="bg-slate-900/70 p-5 rounded-xl border border-slate-800">
-                      <h4 className="font-bold text-white text-base mb-2">{uc.title}</h4>
-                      <div className="space-y-2 text-xs sm:text-sm">
-                        <p><strong className="text-red-400">Problem:</strong> <span className="text-slate-300">{uc.problemSolved}</span></p>
-                        <p><strong className="text-emerald-400">Rust Solution:</strong> <span className="text-slate-300">{uc.howRustSolvesIt}</span></p>
-                        <p><strong className="text-cyan-400">Real-World Adopters:</strong> <span className="text-slate-300">{uc.realWorldExample}</span></p>
-                      </div>
-                      <div className="mt-3 flex flex-wrap gap-1.5 pt-2 border-t border-slate-800/80">
-                        {uc.cratesAndEcosystem.map((cr, cIdx) => (
-                          <span key={cIdx} className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
-                            {cr}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Capstone Projects */}
-              <div className="p-6 sm:p-8 border-b border-slate-800 bg-slate-950/40">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <Award className="w-5 h-5 text-yellow-400" />
-                  <span>Portfolio Capstone Projects (Staff Portfolio Builders)</span>
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {selectedIndustry.capstoneProjects.map((proj, idx) => (
-                    <div key={idx} className="bg-slate-900 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
-                      <div>
-                        <span className={`text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full inline-block mb-2 ${
-                          proj.level === 'Beginner' ? 'bg-blue-900/40 text-blue-300 border border-blue-800' :
-                          proj.level === 'Intermediate' ? 'bg-amber-900/40 text-amber-300 border border-amber-800' :
-                          'bg-red-900/40 text-red-300 border border-red-800'
-                        }`}>
-                          {proj.level}
-                        </span>
-                        <h4 className="font-bold text-white text-base mb-2">{proj.title}</h4>
-                        <p className="text-xs text-slate-400 leading-relaxed mb-4">{proj.description}</p>
-                      </div>
-                      <div>
-                        <div className="text-[11px] font-mono uppercase text-slate-400 mb-1.5">Deliverables:</div>
-                        <ul className="text-xs space-y-1 text-slate-300">
-                          {proj.deliverables.map((deliv, dIdx) => (
-                            <li key={dIdx} className="flex items-center space-x-1.5">
-                              <span className="text-orange-400">▹</span>
-                              <span>{deliv}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Industry Interview Questions */}
-              <div className="p-6 sm:p-8">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center space-x-2">
-                  <HelpCircle className="w-5 h-5 text-indigo-400" />
-                  <span>Senior/Staff Technical Interview Scenarios</span>
-                </h3>
-                <div className="space-y-4">
-                  {selectedIndustry.interviewQuestions.map((q, idx) => (
-                    <div key={idx} className="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                      <div className="flex items-start space-x-3">
-                        <span className="text-xs font-mono font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-1 rounded">
-                          Q{idx + 1}
-                        </span>
-                        <div>
-                          <p className="font-medium text-white text-sm mb-2">{q.question}</p>
-                          <div className="text-xs bg-slate-950 p-3 rounded-lg border border-slate-800/80 text-slate-300 leading-relaxed">
-                            <span className="text-orange-400 font-semibold block mb-0.5">What Interviewers Expect:</span>
-                            {q.whatInterviewersLookFor}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+              <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/30 text-xs">
+                <span className="font-bold text-emerald-400 uppercase tracking-wider block mb-1">
+                  ✓ The Rust Solution & Revolution:
+                </span>
+                <p className="text-emerald-200/90 leading-relaxed mb-2">
+                  {currentTrack.legacyFlawsVsRust.rustFix}
+                </p>
+                <div className="text-[11px] text-emerald-300 font-mono font-bold">
+                  ⚡ Measured Impact: {currentTrack.legacyFlawsVsRust.measuredImpact}
                 </div>
               </div>
             </div>
           </div>
-        )}
 
-        {/* ======================= TAB: CORE ROADMAP ======================= */}
-        {activeTab === 'core' && (
-          <div>
-            <div className="mb-8 text-center max-w-3xl mx-auto">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium mb-3">
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Foundational Mastery Curriculum</span>
+          {/* 3. The Unified Continuous Roadmap (Phase 1 ➔ Phase 4) */}
+          <div className="p-6 sm:p-8 space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center space-x-2">
+                  <Flame className="w-5 h-5 text-orange-500" />
+                  <span>The Unified Journey: Beginner to Staff Expert</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                  Follow this sequential path. Click the checkbox on each skill as you complete it to save your progress!
+                </p>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
-                Universal Rust Engineering Foundations
-              </h1>
-              <p className="text-sm sm:text-base text-slate-400">
-                Regardless of your target industry, every staff-level systems engineer must conquer these four stages of memory semantics, concurrency primitives, asynchronous drivers, and bare-metal compilation.
-              </p>
             </div>
 
+            {/* Sequential Phases */}
             <div className="space-y-8">
-              {CORE_ROADMAP_STAGES.map((stage) => (
-                <div key={stage.stage} className="bg-slate-900/70 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
-                  <div className="p-6 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                        {stage.duration}
-                      </span>
-                      <h2 className="text-xl sm:text-2xl font-bold text-white mt-2">{stage.title}</h2>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-400 max-w-xl">{stage.objectives}</p>
-                  </div>
-
-                  <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {stage.topics.map((topic, tIdx) => (
-                      <div key={tIdx} className="bg-slate-950/80 p-5 rounded-xl border border-slate-800/80 flex flex-col justify-between">
-                        <div>
-                          <h3 className="font-bold text-white text-base mb-2">{topic.title}</h3>
-                          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">{topic.description}</p>
-                        </div>
-                        {topic.codeSnippet && (
-                          <div className="bg-slate-900 p-3.5 rounded-lg border border-slate-800 font-mono text-xs overflow-x-auto text-orange-200">
-                            <pre>{topic.codeSnippet}</pre>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="px-6 py-4 bg-slate-950/40 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center gap-3">
-                    <span className="text-xs font-mono font-bold uppercase text-orange-400 shrink-0">
-                      🛠️ Hands-on Drills:
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {stage.handsOnDrills.map((drill, dIdx) => (
-                        <span key={dIdx} className="text-xs bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 text-slate-300">
-                          {drill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ======================= TAB: PARADIGM SHIFTS ======================= */}
-        {activeTab === 'comparison' && (
-          <div>
-            <div className="mb-8 text-center max-w-3xl mx-auto">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium mb-3">
-                <Layers className="w-3.5 h-3.5" />
-                <span>Industry-Wide Architecture Comparison</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
-                Legacy Stack vs. Rust Modernization
-              </h1>
-              <p className="text-sm sm:text-base text-slate-400">
-                Detailed side-by-side comparison illustrating why the world's most critical infrastructure is migrating away from C/C++, Java, and Go to Rust.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              {INDUSTRY_TRACKS.map((track) => (
-                <div key={track.id} className="bg-slate-900/70 border border-slate-800 rounded-xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="p-2 rounded-lg bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                      {getIndustryIcon(track.icon)}
+              {currentTrack.phases.map((phaseGroup, pIdx) => (
+                <div key={pIdx} className="space-y-4">
+                  {/* Phase Section Title Banner */}
+                  <div className="flex items-center space-x-3 p-3 rounded-xl bg-[#0d1117] border border-slate-800">
+                    <span className="w-7 h-7 rounded-lg bg-orange-600 text-white font-bold flex items-center justify-center text-xs">
+                      {pIdx + 1}
                     </span>
                     <div>
-                      <h2 className="text-lg font-bold text-white">{track.title}</h2>
-                      <span className="text-xs text-slate-400">Category: {track.category}</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-red-950/20 border border-red-900/30 p-4 rounded-xl">
-                      <span className="text-xs font-mono font-bold text-red-400 block mb-2">
-                        Legacy Flaws ({track.comparison.traditionalTech})
-                      </span>
-                      <ul className="text-xs sm:text-sm space-y-1.5 text-red-200/90">
-                        {track.comparison.traditionalPainPoints.map((pt, pIdx) => (
-                          <li key={pIdx}>✕ {pt}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="bg-emerald-950/20 border border-emerald-900/30 p-4 rounded-xl">
-                      <span className="text-xs font-mono font-bold text-emerald-400 block mb-2">
-                        Rust Solution & Transformation
-                      </span>
-                      <ul className="text-xs sm:text-sm space-y-1.5 text-emerald-200/90">
-                        {track.comparison.rustParadigmShift.map((pt, pIdx) => (
-                          <li key={pIdx}>✓ {pt}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 text-xs font-mono bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 text-orange-300">
-                    📈 Measured Impact: {track.comparison.metricsImprovement}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ======================= TAB: READINESS ASSESSMENT ======================= */}
-        {activeTab === 'readiness' && (
-          <div>
-            <div className="mb-8 text-center max-w-3xl mx-auto">
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-medium mb-3">
-                <Award className="w-3.5 h-3.5" />
-                <span>Interactive Skill Matrix & Readiness Tracker</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
-                Your Rust Industry Readiness: {readinessScore}%
-              </h1>
-              <p className="text-sm sm:text-base text-slate-400 mb-4">
-                Check off competencies as you master them. Your progress is saved locally in your browser.
-              </p>
-              
-              {/* Progress Bar */}
-              <div className="w-full bg-slate-800 rounded-full h-3 border border-slate-700 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${readinessScore}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {INITIAL_SKILLS_ASSESSMENT.map((skill) => {
-                const isDone = completedSkills.includes(skill.id);
-                return (
-                  <button
-                    key={skill.id}
-                    onClick={() => toggleSkill(skill.id)}
-                    className={`text-left p-4 rounded-xl border transition-all flex items-start space-x-3 ${
-                      isDone
-                        ? 'bg-orange-500/10 border-orange-500/50 text-white'
-                        : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="mt-0.5">
-                      {isDone ? (
-                        <CheckCircle className="w-5 h-5 text-orange-500" />
-                      ) : (
-                        <Circle className="w-5 h-5 text-slate-600" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2 mb-1">
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300">
-                          {skill.category}
-                        </span>
-                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                          skill.level === 'Beginner' ? 'text-blue-400' :
-                          skill.level === 'Intermediate' ? 'text-amber-400' :
-                          'text-red-400'
-                        }`}>
-                          {skill.level}
-                        </span>
-                      </div>
-                      <p className={`text-sm font-medium ${isDone ? 'text-white' : 'text-slate-300'}`}>
-                        {skill.name}
+                      <h3 className="font-bold text-sm sm:text-base text-white">
+                        {phaseGroup.phaseTitle}
+                      </h3>
+                      <p className="text-[11px] sm:text-xs text-slate-400">
+                        {phaseGroup.phaseDescription}
                       </p>
                     </div>
-                  </button>
-                );
-              })}
+                  </div>
+
+                  {/* Skills under this Phase */}
+                  <div className="space-y-4 pl-0 sm:pl-4">
+                    {phaseGroup.skills.map((skill) => {
+                      const isDone = (completedSkills[currentTrack.id] || []).includes(skill.id);
+                      return (
+                        <div 
+                          key={skill.id}
+                          className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                            isDone 
+                              ? 'border-emerald-500/40 bg-[#161b22] shadow-lg' 
+                              : 'border-slate-800 bg-[#0d1117] hover:border-slate-700'
+                          }`}
+                        >
+                          {/* Skill Header */}
+                          <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 bg-slate-900/60">
+                            <div className="flex items-start space-x-3">
+                              <button
+                                onClick={() => toggleSkill(currentTrack.id, skill.id)}
+                                className="mt-1 transition hover:scale-110"
+                                title={isDone ? "Mark as incomplete" : "Mark as completed"}
+                              >
+                                {isDone ? (
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                                ) : (
+                                  <Circle className="w-6 h-6 text-slate-600 hover:text-orange-400" />
+                                )}
+                              </button>
+                              <div>
+                                <div className="flex items-center space-x-2">
+                                  <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-full font-bold ${
+                                    skill.levelBadge === 'Beginner' ? 'bg-blue-900/40 text-blue-300 border border-blue-700/60' :
+                                    skill.levelBadge === 'Intermediate' ? 'bg-amber-900/40 text-amber-300 border border-amber-700/60' :
+                                    skill.levelBadge === 'Advanced' ? 'bg-orange-900/40 text-orange-300 border border-orange-700/60' :
+                                    'bg-red-900/40 text-red-300 border border-red-700/60'
+                                  }`}>
+                                    {skill.levelBadge}
+                                  </span>
+                                  <h4 className="text-base sm:text-lg font-bold text-white">
+                                    {skill.title}
+                                  </h4>
+                                </div>
+                                <span className="text-[11px] text-slate-400 font-mono">
+                                  ⏱️ Estimated Time: {skill.estimatedTime}
+                                </span>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => toggleSkill(currentTrack.id, skill.id)}
+                              className={`text-xs px-3.5 py-1.5 rounded-xl border font-semibold transition self-start sm:self-center ${
+                                isDone
+                                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                                  : 'bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-orange-600 hover:text-white hover:border-orange-500'
+                              }`}
+                            >
+                              {isDone ? 'Completed ✓' : 'Mark Complete'}
+                            </button>
+                          </div>
+
+                          {/* Skill Body (Left: Explanation, Right: Code) */}
+                          <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Left Column: ELI5 + Why it matters + Concepts + Exercise */}
+                            <div className="space-y-4">
+                              {/* ELI5 Explanation */}
+                              <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/20 text-xs sm:text-sm text-amber-200/90 leading-relaxed">
+                                <strong className="text-amber-400 block mb-1">🐣 Plain English (ELI5):</strong>
+                                {skill.eli5}
+                              </div>
+
+                              {/* Why in this industry */}
+                              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                                <strong className="text-slate-100">Why needed in {currentTrack.title}: </strong>
+                                {skill.whyInThisIndustry}
+                              </p>
+
+                              {/* Concepts to Master */}
+                              <div>
+                                <span className="text-xs font-mono uppercase text-slate-400 block mb-1.5 font-bold">
+                                  Key Concepts to Master:
+                                </span>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                                  {skill.conceptsToMaster.map((concept, cIdx) => (
+                                    <div key={cIdx} className="text-xs bg-slate-900/90 p-2 rounded-lg border border-slate-800 text-slate-300 flex items-center space-x-1.5">
+                                      <span className="text-orange-400">▹</span>
+                                      <span>{concept}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Practical Hands-On Exercise */}
+                              <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-900/30">
+                                <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block mb-1">
+                                  🎯 Practice Exercise:
+                                </span>
+                                <p className="text-xs text-purple-200/90 mb-1">{skill.exercise.task}</p>
+                                <p className="text-[11px] text-purple-300/70 italic">💡 Hint: {skill.exercise.hint}</p>
+                              </div>
+                            </div>
+
+                            {/* Right Column: Code Snippet */}
+                            <div className="flex flex-col">
+                              <div className="flex items-center justify-between px-4 py-2.5 bg-[#161b22] rounded-t-xl border border-b-0 border-slate-800">
+                                <span className="text-xs font-mono text-slate-300 font-semibold flex items-center space-x-2">
+                                  <Code2 className="w-3.5 h-3.5 text-orange-400" />
+                                  <span>{skill.codeExample.title}</span>
+                                </span>
+                                <button
+                                  onClick={() => copyCode(skill.codeExample.code, skill.id)}
+                                  className="flex items-center space-x-1 text-[11px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 border border-slate-700 transition"
+                                >
+                                  {copiedCodeId === skill.id ? (
+                                    <>
+                                      <Check className="w-3 h-3 text-emerald-400" />
+                                      <span className="text-emerald-400">Copied</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy className="w-3 h-3" />
+                                      <span>Copy</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                              <div className="bg-[#090d16] p-4 rounded-b-xl border border-slate-800 font-mono text-xs overflow-x-auto text-orange-200 flex-1 leading-relaxed">
+                                <pre>{skill.codeExample.code}</pre>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
+
+            {/* 4. Portfolio Capstone Project Walkthrough */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-orange-950/25 via-slate-900 to-[#161b22] border border-orange-500/40">
+              <div className="flex items-center space-x-2 text-orange-400 font-bold text-sm mb-1">
+                <Rocket className="w-4 h-4" />
+                <span>Production Portfolio Capstone: {currentTrack.capstoneProject.title}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-300 mb-4 leading-relaxed">
+                {currentTrack.capstoneProject.description}
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                {currentTrack.capstoneProject.stepByStepGuide.map((step, sIdx) => (
+                  <div key={sIdx} className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <span className="text-xs font-mono font-bold text-orange-400 mb-1">Step {sIdx + 1}</span>
+                    <p className="text-xs text-slate-300 leading-snug">{step}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Must-Know Crates & Ecosystem */}
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Must-Know Production Crates for {currentTrack.title}</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {currentTrack.mustKnowCrates.map((crate, cIdx) => (
+                  <a
+                    key={cIdx}
+                    href={crate.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-3.5 bg-[#0d1117] rounded-xl border border-slate-800 hover:border-orange-500/50 hover:bg-slate-900 transition block group"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-mono text-sm font-bold text-orange-400 group-hover:text-orange-300">
+                        {crate.name}
+                      </span>
+                      <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 transition" />
+                    </div>
+                    <p className="text-xs text-slate-400 leading-snug">{crate.purpose}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* 6. Technical Interview Scenarios */}
+            <div className="pt-4 border-t border-slate-800">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center space-x-2">
+                <BookOpen className="w-4 h-4 text-cyan-400" />
+                <span>Staff/Principal Interview Questions ({currentTrack.title})</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {currentTrack.interviewPrep.map((qa, qIdx) => (
+                  <div key={qIdx} className="bg-[#0d1117] p-4 rounded-xl border border-slate-800">
+                    <p className="font-semibold text-white text-xs sm:text-sm mb-2 flex items-start space-x-2">
+                      <span className="text-orange-400 font-mono font-bold">Q{qIdx + 1}:</span>
+                      <span>{qa.question}</span>
+                    </p>
+                    <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                      <strong className="text-emerald-400 block mb-0.5">What Interviewers Expect:</strong>
+                      {qa.expectedAnswer}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
-        )}
+        </div>
 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-800/80 bg-[#161b22] py-8 text-center text-xs text-slate-500 mt-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>
-            Crafted for engineers aiming for Principal/Staff positions across Systems, Security, Defense, Aerospace, FinTech, and Cloud.
-          </p>
-          <p className="font-mono text-slate-400">
-            Open Source • Deployable to GitHub Pages Anywhere
-          </p>
+          <div className="flex items-center space-x-2">
+            <span className="text-lg">🦀</span>
+            <span className="text-slate-400 font-medium">Rust Across Industries — Unified Zero-to-Hero Architecture Guide</span>
+          </div>
+          <div className="flex items-center space-x-4 text-slate-400 font-mono">
+            <a 
+              href="https://rrrreddy.github.io/rust-industry-roadmap/" 
+              target="_blank" 
+              rel="noreferrer"
+              className="text-orange-400 hover:underline font-bold"
+            >
+              rrrreddy.github.io/rust-industry-roadmap
+            </a>
+          </div>
         </div>
       </footer>
     </div>

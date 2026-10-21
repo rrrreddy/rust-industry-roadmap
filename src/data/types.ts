@@ -1,24 +1,31 @@
-export interface Skill {
-  name: string;
-  category: 'core' | 'programmatic' | 'architectural' | 'tooling';
-  importance: 'Essential' | 'High' | 'Advanced';
-  description: string;
-  practicalApplication: string;
-}
+export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Master';
 
-export interface UseCase {
+export interface RoadmapStep {
+  id: string;
+  level: SkillLevel;
   title: string;
-  problemSolved: string;
-  howRustSolvesIt: string;
-  realWorldExample: string;
-  cratesAndEcosystem: string[];
+  eli5: string; // "Explain Like I'm 5" - simple plain-English breakdown
+  whyItMatters: string;
+  conceptsToMaster: string[];
+  codeExample: {
+    title: string;
+    description: string;
+    code: string;
+  };
+  exercise: {
+    task: string;
+    hint: string;
+  };
+  estimatedHours: string;
 }
 
-export interface IndustryComparison {
-  traditionalTech: string;
-  traditionalPainPoints: string[];
-  rustParadigmShift: string[];
-  metricsImprovement: string;
+export interface IndustryUseCase {
+  title: string;
+  eli5Summary: string;
+  theOldWay: string; // How it used to be done and why it broke
+  theRustWay: string; // How Rust revolutionized it
+  realWorldProjects: string[];
+  keyCrates: { name: string; purpose: string; url: string }[];
 }
 
 export interface IndustryTrack {
@@ -26,39 +33,37 @@ export interface IndustryTrack {
   title: string;
   tagline: string;
   icon: string;
-  category: string;
   color: string;
-  badge: string;
-  scopeOfWork: string[];
-  dayInTheLife: string;
-  roleTitles: string[];
-  keyChallenges: string[];
-  comparison: IndustryComparison;
-  coreConcepts: string[];
-  programmaticSkills: Skill[];
-  mustKnowCrates: { name: string; purpose: string; link?: string }[];
-  useCases: UseCase[];
-  capstoneProjects: {
-    level: 'Beginner' | 'Intermediate' | 'Staff/Principal';
+  accentColor: string;
+  eli5Introduction: string; // Plain English for complete beginners
+  whatYouWillBuild: string[];
+  averageSalaryOrDemand: string;
+  prerequisites: string[];
+  roadmapSteps: RoadmapStep[];
+  useCases: IndustryUseCase[];
+  firstProjectGuide: {
     title: string;
     description: string;
-    deliverables: string[];
-  }[];
-  interviewQuestions: {
-    question: string;
-    whatInterviewersLookFor: string;
-  }[];
+    steps: string[];
+  };
 }
 
-export interface CoreStage {
-  stage: number;
+export interface RustBasicsStep {
+  id: string;
+  module: number;
   title: string;
-  duration: string;
-  objectives: string;
-  topics: {
-    title: string;
-    description: string;
-    codeSnippet?: string;
-  }[];
-  handsOnDrills: string[];
+  subtitle: string;
+  analogy: string;
+  explanation: string;
+  codeSnippet: string;
+  commonPitfalls: string[];
+  handsOnTask: string;
+}
+
+export interface GlossaryItem {
+  term: string;
+  pronunciation?: string;
+  eli5: string;
+  technicalDefinition: string;
+  relatedIndustry: string;
 }
