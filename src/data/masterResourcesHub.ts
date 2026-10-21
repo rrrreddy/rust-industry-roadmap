@@ -46,10 +46,10 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "Advanced Systems Rust, Unsafe Code, Atomics & Microarchitecture",
     whySubscribe: "The gold standard for deep, uncompromising multi-hour live streams exploring language mechanics from the compiler to silicon.",
     highlightedPlaylistsOrVideos: [
-      { title: "Crust of Rust: Advanced Language Features Playlist", url: "https://www.youtube.com/playlist?list=PLqbS7AVVErFiWDOAVrPt7aYmnuuOLYvOa" },
-      { title: "Decrusting Real-World Crates (ripgrep, bindgen, bumpalo)", url: "https://www.youtube.com/playlist?list=PLqbS7AVVErFhvi68uE0eE_E3p9qE1yVw7" },
+      { title: "Crust of Rust: Full Advanced Language Features Playlist", url: "https://www.youtube.com/playlist?list=PLqbS7AVVErFiWDOAVrPt7aYmnuuOLYvOa" },
       { title: "Crust of Rust: Lifetime Annotations", url: "https://www.youtube.com/watch?v=rAl-9HwD858" },
-      { title: "Crust of Rust: Atomics & Memory Ordering", url: "https://www.youtube.com/watch?v=rMGWeSjctlY" }
+      { title: "Crust of Rust: Atomics & Memory Ordering", url: "https://www.youtube.com/watch?v=rMGWeSjctlY" },
+      { title: "Crust of Rust: Dispatch & Fat Pointers", url: "https://www.youtube.com/watch?v=xcygqF5LVmM" }
     ]
   },
   {
@@ -60,9 +60,8 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "Concurrency, Hardware Memory Models, Low-Level Mutexes & Atomics",
     whySubscribe: "Team lead of the standard library and author of 'Rust Atomics and Locks'. Demonstrates building concurrency primitives from scratch.",
     highlightedPlaylistsOrVideos: [
-      { title: "Rust Atomics and Memory Ordering (RustConf)", url: "https://www.youtube.com/watch?v=r_M5z17_g-Y" },
-      { title: "Building Our Own Mutex from Scratch (Rust Nation UK)", url: "https://www.youtube.com/watch?v=jQZ8sHwtkU8" },
-      { title: "Hardware Memory Models: x86_64 vs ARM64", url: "https://www.youtube.com/watch?v=DfyC5bO_6pQ" }
+      { title: "Rust Atomics and Locks (Canonical Book Site)", url: "https://marabos.nl/atomics/" },
+      { title: "Cpu Caches and Why You Care (Scott Meyers Hardware Lecture)", url: "https://www.youtube.com/watch?v=WDIkqP4JbkE" }
     ]
   },
   {
@@ -73,9 +72,8 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "Compiler Architecture, RFC Evolution & State-of-the-Art Production Systems",
     whySubscribe: "Annual flagship keynotes delivered by the language founders, compiler engineers, and infrastructure architects.",
     highlightedPlaylistsOrVideos: [
-      { title: "Carl Lerche: Tokio — An Asynchronous Rust Runtime", url: "https://www.youtube.com/watch?v=4Q3G_fP49Hk" },
-      { title: "Ralf Jung: Stacked Borrows — Formalizing Unsafe Rust", url: "https://www.youtube.com/watch?v=0cT6r_K4Z1g" },
-      { title: "Celina Val: Verifying Rust Code with Kani (AWS)", url: "https://www.youtube.com/watch?v=vVzB3Z2_nLk" }
+      { title: "Miguel Ojeda (Rust for Linux): KEYNOTE | RustConf 2024", url: "https://www.youtube.com/watch?v=FRMJzNYut4g" },
+      { title: "Kani: A Model Checker for Rust", url: "https://www.youtube.com/watch?v=heUOajK6d8g" }
     ]
   },
   {
@@ -86,22 +84,24 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "High-Scale Distributed Systems, Kernel Development & HFT",
     whySubscribe: "The premier enterprise conference featuring talks from Cloudflare, Fastly, Jane Street, and AWS engineers.",
     highlightedPlaylistsOrVideos: [
-      { title: "Alice Ryhl: Async Rust in Practice (Google / Tokio)", url: "https://www.youtube.com/watch?v=W7m1w52sYkQ" },
-      { title: "Ultra-Low Latency Rust: Lessons from High Frequency Trading", url: "https://www.youtube.com/watch?v=s0q7i_L9Q8A" },
-      { title: "Ferrocene: Open Source Qualified Rust Compiler for ASIL D", url: "https://www.youtube.com/watch?v=hB9_8a7d6e5" }
+      { title: "Mark Russinovich (Azure CTO): Why Azure is Moving to Rust from C++", url: "https://www.youtube.com/watch?v=SmUprpjCWjM" },
+      { title: "Alice Ryhl: What It Takes to Keep Tokio Running", url: "https://www.youtube.com/watch?v=Lc3aw_NIOt0" },
+      { title: "Alice Ryhl: Stabilizing Rust in the Linux Kernel", url: "https://www.youtube.com/watch?v=J2M3EGUgq0c" },
+      { title: "Demystifying LLVM: Writing Your First Compiler - Lyle Dean", url: "https://www.youtube.com/watch?v=hdxkt5mEnYE" }
     ]
   },
   {
     name: "Logan Smith",
-    handle: "@LoganSmithVideos",
-    url: "https://www.youtube.com/@LoganSmithVideos",
+    handle: "@_noisecode",
+    url: "https://www.youtube.com/@_noisecode",
     subscriberTag: "Systems Educator",
     focusArea: "Aliasing Rules, Monomorphization, Error Handling & Type Systems",
     whySubscribe: "Crystal-clear conceptual visualizer bridging high-level Rust syntax to low-level assembly execution.",
     highlightedPlaylistsOrVideos: [
-      { title: "Aliasing XOR Mutability: Why Rust is Fast and Safe", url: "https://www.youtube.com/watch?v=DfyC5bO_6pQ" },
-      { title: "Idiomatic Error Handling with thiserror & anyhow", url: "https://www.youtube.com/watch?v=s5S2EdZ8VnE" },
-      { title: "Inspecting Assembly with cargo-show-asm", url: "https://www.youtube.com/watch?v=68_w_z8t8e4" }
+      { title: "Moves Are Broken (Why Move Semantics Exist)", url: "https://www.youtube.com/watch?v=Klq-sNxuP2g" },
+      { title: "Comprehending Proc Macros", url: "https://www.youtube.com/watch?v=SMCRQj9Hbx8" },
+      { title: "Two Ways To Do Dynamic Dispatch", url: "https://www.youtube.com/watch?v=wU8hQvU8aKM" },
+      { title: "A Simpler Way to See Results (Error Handling)", url: "https://www.youtube.com/watch?v=s5S2Ed5T-dc" }
     ]
   },
   {
@@ -112,9 +112,10 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "Beginner-to-Intermediate Mastery, Crate Guides & Toolchain",
     whySubscribe: "Concise, bite-sized weekly tutorials covering standard library features, ecosystem crates, and best practices.",
     highlightedPlaylistsOrVideos: [
-      { title: "Rust Beginner to Advanced Course", url: "https://www.youtube.com/watch?v=zF34dRivLOw" },
-      { title: "Calling C from Rust (FFI Tutorial)", url: "https://www.youtube.com/watch?v=8VzV8F4r_nQ" },
-      { title: "Writing Custom Derive Macros in Rust", url: "https://www.youtube.com/watch?v=d_k8yV_n7f8" }
+      { title: "Rust Crash Course | Rustlang", url: "https://www.youtube.com/watch?v=zF34dRivLOw" },
+      { title: "Making Rust Structs as Small as Humanly Possible", url: "https://www.youtube.com/watch?v=3G6heF_Hxk0" },
+      { title: "The Unsafe Rust Survival Guide", url: "https://www.youtube.com/watch?v=91uStPBLibc" },
+      { title: "Your First Rust Program Without an OS", url: "https://www.youtube.com/watch?v=wITJhrespHY" }
     ]
   },
   {
@@ -125,9 +126,10 @@ export const TOP_YOUTUBE_CHANNELS: CuratedChannel[] = [
     focusArea: "Fast-Paced Rust Philosophy, Memory Safety & Tooling Culture",
     whySubscribe: "Energetic, highly focused 10-minute conceptual videos answering 'Why' Rust was engineered this way.",
     highlightedPlaylistsOrVideos: [
-      { title: "Rust's Secret Weapon: The Stack & The Heap", url: "https://www.youtube.com/watch?v=3by0i5gH_jQ" },
-      { title: "Fast, Safe, and Pretty Errors in Rust", url: "https://www.youtube.com/watch?v=9_3xV8w9XzQ" },
-      { title: "Rust's Cargo is Incredible", url: "https://www.youtube.com/watch?v=5V_l1j8iN_A" }
+      { title: "Rust for the Impatient", url: "https://www.youtube.com/watch?v=br3GIIQeefY" },
+      { title: "Rust: Don't Panic", url: "https://www.youtube.com/watch?v=usRlRCNIOG0" },
+      { title: "Async Isn't Real & Cannot Hurt You", url: "https://www.youtube.com/watch?v=AiSl4vf40WU" },
+      { title: "Rust is the New C", url: "https://www.youtube.com/watch?v=3e-nauaCkgo" }
     ]
   }
 ];

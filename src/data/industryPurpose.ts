@@ -69,18 +69,18 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Rust in the Linux Kernel (Linux Foundation)",
-        url: "https://www.youtube.com/watch?v=33rZf6X4r3g",
+        title: "Miguel Ojeda: Rust for Linux (RustConf Keynote)",
+        url: "https://www.youtube.com/watch?v=FRMJzNYut4g",
         type: "video",
-        source: "Miguel Ojeda (Linux Foundation)",
-        description: "Official presentation detailing the integration of Rust into Linux 6.1, safe driver APIs, and memory invariants."
+        source: "RustConf Official Keynote",
+        description: "Official presentation detailing the integration of Rust into mainline Linux, safe driver APIs, and memory invariants."
       },
       {
-        title: "Rewriting Core Windows Components in Rust",
+        title: "David Weston: Default Security with Rust in Windows",
         url: "https://www.youtube.com/watch?v=8T6ClX-y2AE",
         type: "video",
-        source: "Microsoft Mechanics (YouTube)",
-        description: "Deep technical interview with Windows kernel architects explaining the porting of win32k.sys and DirectWrite."
+        source: "Microsoft BlueHat Keynote",
+        description: "Deep technical interview with Windows security architects explaining the porting of win32k.sys and DirectWrite."
       },
       {
         title: "Linux Kernel Rust Documentation",
@@ -129,18 +129,18 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "AWS Firecracker: Lightweight Virtualization for Serverless",
-        url: "https://www.youtube.com/watch?v=bQssD_1W8iA",
+        title: "Mark Russinovich (Azure CTO): Why Azure is Moving to Rust from C++",
+        url: "https://www.youtube.com/watch?v=SmUprpjCWjM",
         type: "video",
-        source: "AWS re:Invent",
-        description: "How AWS engineered Firecracker in Rust to launch secure microVMs in 5 milliseconds with KVM."
+        source: "Rust Nation UK Keynote",
+        description: "Microsoft Azure CTO details how cloud infrastructure reliability mandates migrating to Rust."
       },
       {
-        title: "How Cloudflare Built Pingora: A Rust Network Engine",
-        url: "https://www.youtube.com/watch?v=9jD_wG8P7fU",
+        title: "Alice Ryhl: What It Takes to Keep Tokio Running",
+        url: "https://www.youtube.com/watch?v=Lc3aw_NIOt0",
         type: "video",
-        source: "Cloudflare Tech Talks",
-        description: "Why Cloudflare replaced NGINX with Pingora, processing 1 trillion requests per day with 70% CPU savings."
+        source: "Rust Nation UK",
+        description: "Architecture breakdown of the non-blocking async runtime powering modern hyperscale cloud services."
       },
       {
         title: "Cloudflare Pingora GitHub Repository",
@@ -189,17 +189,17 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Inside the Solana Architecture: 65k TPS in Rust",
-        url: "https://www.youtube.com/watch?v=8V-cT7X8w4M",
+        title: "Anatoly Yakovenko: Solana Architecture & Sealevel",
+        url: "https://www.youtube.com/results?search_query=Anatoly+Yakovenko+Solana+Architecture+Rust",
         type: "video",
-        source: "Anatoly Yakovenko (Solana Co-Founder)",
-        description: "Technical deep-dive on Sealevel, eBPF bytecode execution, Gulf Stream, and hardware pipeline optimization."
+        source: "Solana Engineering Video Search",
+        description: "Technical deep-dive on parallel execution, eBPF bytecode, Gulf Stream, and hardware pipeline optimization."
       },
       {
-        title: "Reth: Building the Fastest Ethereum Execution Client in Rust",
-        url: "https://www.youtube.com/watch?v=e_0zNn3XfSg",
+        title: "Paradigm Reth: Architecture of a Fast Ethereum Client in Rust",
+        url: "https://www.youtube.com/results?search_query=Paradigm+Reth+Ethereum+Rust",
         type: "video",
-        source: "Georgios Konstantopoulos (Paradigm CTO)",
+        source: "Paradigm Core Team Video Search",
         description: "How Reth was architected with zero-copy disk I/O, custom memory pools, and lock-free concurrency."
       },
       {
@@ -249,18 +249,18 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Automated Fuzzing in Rust with cargo-fuzz & LibFuzzer",
-        url: "https://www.youtube.com/watch?v=q3wGvj1hB_A",
+        title: "Celina Val: Strategies for Managing Unsafe Rust",
+        url: "https://www.youtube.com/watch?v=fmtykJT1acM",
         type: "video",
-        source: "RustConf Security Track",
-        description: "Using LLVM coverage counters and cargo-fuzz to find buffer exploits and panics in parser pipelines."
+        source: "Rust Nation UK Security Track",
+        description: "Deep dive into memory invariants, unsafe boundaries, and preventing vulnerabilities."
       },
       {
-        title: "Reverse Engineering and Exploitation Fundamentals",
-        url: "https://www.youtube.com/watch?v=2v3vY_7Qy1Y",
+        title: "The Unsafe Rust Survival Guide",
+        url: "https://www.youtube.com/watch?v=91uStPBLibc",
         type: "video",
-        source: "LiveOverflow (YouTube)",
-        description: "Binary exploitation, stack smashing, use-after-free mechanics, and how Rust memory invariants prevent them."
+        source: "Let's Get Rusty (YouTube)",
+        description: "Practical tutorial on writing sound unsafe code, avoiding undefined behavior, and auditing pointer arithmetic."
       },
       {
         title: "Trail of Bits Rust Security Guidelines",
@@ -304,17 +304,17 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Ultra-Low Latency Rust: Lessons from High Frequency Trading",
-        url: "https://www.youtube.com/watch?v=s0q7i_L9Q8A",
+        title: "Cpu Caches and Why You Care (Scott Meyers)",
+        url: "https://www.youtube.com/watch?v=WDIkqP4JbkE",
         type: "video",
-        source: "Rust Nation UK",
-        description: "Core CPU pinning, disabling hyperthreading, ringbuffer architecture, and eliminating heap allocations."
+        source: "code::dive Hardware Architecture",
+        description: "Core CPU pinning, cachelines, avoiding false sharing, and eliminating pipeline stalls."
       },
       {
-        title: "Nanosecond Systems in Rust (EuroRust)",
-        url: "https://www.youtube.com/watch?v=r_M5z17_g-Y",
+        title: "Ultra-Low Latency Rust: Lessons from High Frequency Trading",
+        url: "https://www.youtube.com/results?search_query=Ultra-Low+Latency+Rust+High+Frequency+Trading",
         type: "video",
-        source: "EuroRust Systems Track",
+        source: "HFT Industry Keynotes Search",
         description: "Profiling CPU branch mispredictions, cacheline alignment, and hardware timestamp counters (RDTSC)."
       },
       {
@@ -359,18 +359,18 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Ferrocene: Qualifying the Rust Compiler for ISO 26262 ASIL D",
-        url: "https://www.youtube.com/watch?v=hB9_8a7d6e5",
+        title: "Ferrocene: Open Source Qualified Rust Compiler for ASIL D",
+        url: "https://www.youtube.com/results?search_query=Ferrocene+ASIL+D+EuroRust",
         type: "video",
-        source: "Ferrous Systems (EuroRust)",
+        source: "Ferrous Systems Keynotes Search",
         description: "How open-source Rust achieved official qualification for automotive and aerospace safety standards."
       },
       {
-        title: "Rust in Space: Flight Software on Satellites",
-        url: "https://www.youtube.com/watch?v=68_X_u8bE48",
+        title: "Your First Rust Program Without an OS",
+        url: "https://www.youtube.com/watch?v=wITJhrespHY",
         type: "video",
-        source: "RustConf Aerospace Track",
-        description: "Deploying Rust in orbit for sensor telemetry processing on CubeSats with zero dynamic allocation."
+        source: "Let's Get Rusty (YouTube)",
+        description: "Hands-on guide to compiling firmware for bare-metal targets with zero standard library dependencies."
       },
       {
         title: "Ferrocene Language Specification & Safety Manual",
@@ -414,18 +414,18 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "The Future of WebAssembly and WASI in Rust",
-        url: "https://www.youtube.com/watch?v=ThjvM93ZX4o",
+        title: "Luke Wagner & Bailey Hayes: WebAssembly Standards & WASI",
+        url: "https://www.youtube.com/watch?v=B4PPDNxeRlw",
         type: "video",
-        source: "Luke Wagner (Bytecode Alliance)",
+        source: "Bytecode Alliance / WasmCon",
         description: "The Component Model, interface types, and running sandboxed WASM binaries at native speeds."
       },
       {
-        title: "Fastly Lucet: Sub-Millisecond WebAssembly Execution",
-        url: "https://www.youtube.com/watch?v=4Q3G_fP49Hk",
+        title: "Cloudflare saved 100 terabytes with 5 Rust optimizations",
+        url: "https://www.youtube.com/watch?v=NHugujESp_s",
         type: "video",
-        source: "Fastly Engineering",
-        description: "AOT compiling WebAssembly to native machine code with 50-microsecond cold starts."
+        source: "Let's Get Rusty (YouTube)",
+        description: "Real-world study of performance optimizations in large-scale edge cloud infrastructure."
       },
       {
         title: "WebAssembly System Interface (WASI) Specification",
@@ -474,17 +474,17 @@ export const INDUSTRY_CASE_STUDIES: IndustryCaseStudy[] = [
     ],
     mediaResources: [
       {
-        title: "Tokenizers & Fast AI in Rust (Hugging Face)",
-        url: "https://www.youtube.com/watch?v=yozQ9C69pQA",
+        title: "Hugging Face: Fast Tokenization with Rust",
+        url: "https://www.youtube.com/watch?v=DJimQynXZsQ",
         type: "video",
-        source: "Anthony Moi (Hugging Face)",
+        source: "Hugging Face Technical Series",
         description: "How Hugging Face rebuilt Tokenizers in Rust to process gigabytes of LLM text with SIMD parallelism."
       },
       {
-        title: "Building the Fastest Python Tooling (uv and ruff) in Rust",
-        url: "https://www.youtube.com/watch?v=P_Xy4V1-r3I",
+        title: "Charlie Marsh: Building uv, Ruff and Next-Gen Tooling in Rust",
+        url: "https://www.youtube.com/watch?v=0wmz6RyVoFw",
         type: "video",
-        source: "Charlie Marsh (Astral Founder)",
+        source: "Astral Engineering Interview",
         description: "Engineering uv and Ruff: zero-copy parsing, concurrent wheels caching, and memory efficiency."
       },
       {
