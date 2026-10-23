@@ -32,10 +32,12 @@ import {
   INTERACTIVE_PLATFORMS
 } from './data/masterResourcesHub';
 
-type NavigationTab = 'purpose' | 'how-to-learn' | 'what-to-learn' | 'domains' | 'frontier' | 'resources';
+import { RustBookViewer } from './components/RustBookViewer';
+
+type NavigationTab = 'the-rust-book' | 'purpose' | 'how-to-learn' | 'what-to-learn' | 'domains' | 'frontier' | 'resources';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<NavigationTab>('purpose');
+  const [activeTab, setActiveTab] = useState<NavigationTab>('the-rust-book');
   
   // Tab 1 state
   const [selectedIndustryCaseId, setSelectedIndustryCaseId] = useState<string>('os-kernel');
@@ -121,7 +123,7 @@ export default function App() {
       <header className="border-b border-orange-500/20 bg-[#111622]/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo & Title */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('purpose')}>
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('the-rust-book')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 via-amber-600 to-red-600 flex items-center justify-center text-xl shadow-lg shadow-orange-500/25 border border-orange-400/40">
               🦀
             </div>
@@ -142,6 +144,18 @@ export default function App() {
 
           {/* Top Level Nav Tabs */}
           <div className="hidden lg:flex items-center space-x-1 bg-[#090d16] p-1 rounded-xl border border-slate-800 text-xs">
+            <button
+              onClick={() => setActiveTab('the-rust-book')}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
+                activeTab === 'the-rust-book'
+                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30 font-semibold'
+                  : 'text-amber-400 hover:text-white hover:bg-amber-950/40'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+              <span>📖 The Rust Book (3rd Ed)</span>
+            </button>
+
             <button
               onClick={() => setActiveTab('purpose')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition font-medium ${
@@ -243,6 +257,14 @@ export default function App() {
         {/* Mobile Submenu Bar */}
         <div className="lg:hidden flex items-center space-x-1 px-3 py-2 border-t border-slate-800 overflow-x-auto text-xs">
           <button
+            onClick={() => setActiveTab('the-rust-book')}
+            className={`px-2.5 py-1 rounded-md whitespace-nowrap transition ${
+              activeTab === 'the-rust-book' ? 'bg-amber-600 text-white font-bold' : 'text-amber-400'
+            }`}
+          >
+            📖 The Rust Book (3rd Ed)
+          </button>
+          <button
             onClick={() => setActiveTab('purpose')}
             className={`px-2.5 py-1 rounded-md whitespace-nowrap transition ${
               activeTab === 'purpose' ? 'bg-orange-600 text-white font-bold' : 'text-slate-400'
@@ -295,6 +317,13 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+        {/* ========================================================================= */}
+        {/* TAB 0: THE RUST PROGRAMMING LANGUAGE (3RD EDITION) - COMPREHENSIVE GUIDE   */}
+        {/* ========================================================================= */}
+        {activeTab === 'the-rust-book' && (
+          <RustBookViewer onNavigateToDomains={() => setActiveTab('domains')} />
+        )}
 
         {/* ========================================================================= */}
         {/* TAB 1: WHERE RUST IS USED & ITS FUTURE PURPOSE IN GLOBAL INDUSTRY         */}
